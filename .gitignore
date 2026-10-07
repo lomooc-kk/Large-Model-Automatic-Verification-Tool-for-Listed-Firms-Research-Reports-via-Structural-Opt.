@@ -33,3 +33,7 @@ Thumbs.db
 /artifacts/case-diagnostics-20261005/validation.json
 /artifacts/case-diagnostics-20261005/ui_validation.json
 /artifacts/case-diagnostics-20261005/review_validation.json
+
+evals/external_benchmarks/sources/
+evals/external_benchmarks/__pycache__/
+*.pyc
