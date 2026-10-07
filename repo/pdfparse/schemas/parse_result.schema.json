@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Canonical schema is maintained in the project root.",
+  "$ref": "../../../pdfparse/schemas/parse_result.schema.json"
+}

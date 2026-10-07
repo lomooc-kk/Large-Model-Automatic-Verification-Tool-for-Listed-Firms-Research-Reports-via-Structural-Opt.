@@ -1,0 +1,35 @@
+# 数据与产物
+data/
+models/
+logs/
+evals/reports/
+
+# 公开评测集与论文原件（体积大、许可未明，只放本地）
+Are Large Language Models Reliable Reviewers A Benchmark for Error Detection in Financial Documents/
+测评集/
+
+# 运行环境
+.venv/
+__pycache__/
+*.pyc
+
+# 编辑器与系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Derived case-review assets: rebuild from the tracked frozen batch + notes.
+/artifacts/case-diagnostics-20261005/documents/
+/artifacts/case-diagnostics-20261005/requests/
+/artifacts/case-diagnostics-20261005/frozen_source/
+/artifacts/case-diagnostics-20261005/frozen_source_manifest.json
+/artifacts/case-diagnostics-20261005/index.html
+/artifacts/case-diagnostics-20261005/cases.jsonl
+/artifacts/case-diagnostics-20261005/manifest.json
+/artifacts/case-diagnostics-20261005/original_source_verification.json
+/artifacts/case-diagnostics-20261005/request_verification_all442.jsonl
+/artifacts/case-diagnostics-20261005/human_review.jsonl
+/artifacts/case-diagnostics-20261005/validation.json
+/artifacts/case-diagnostics-20261005/ui_validation.json
+/artifacts/case-diagnostics-20261005/review_validation.json
