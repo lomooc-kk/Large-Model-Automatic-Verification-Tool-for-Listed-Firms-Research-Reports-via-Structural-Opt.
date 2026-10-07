@@ -36,4 +36,3 @@ Thumbs.db
 
 evals/external_benchmarks/sources/
 evals/external_benchmarks/__pycache__/
-*.pyc
