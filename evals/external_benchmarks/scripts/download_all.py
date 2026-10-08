@@ -27,8 +27,26 @@ SRC = os.path.join(ROOT, "sources")
 GH_API_TREE = "https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1"
 JSDELIVR = "https://cdn.jsdelivr.net/gh/{repo}@{branch}/{path}"
 RAW = "https://raw.githubusercontent.com/{repo}/{branch}/{path}"
-HF = "https://hf-mirror.com/datasets/{repo}/resolve/main/{path}"
-HF_TREE = "https://hf-mirror.com/api/datasets/{repo}/tree/main?recursive=true"
+HF = "https://hf-mirror.com/datasets/{repo}/resolve/{rev}/{path}"
+HF_TREE = "https://hf-mirror.com/api/datasets/{repo}/tree/{rev}?recursive=true"
+
+# 固定版本（2026-10-08 核对）。不追踪 main，保证重跑拿到同一批内容；
+# 真正的冻结依据是 audit/source_hashes.json 里的 sha256。
+PINS = {
+    "SiluPanda/finverification-bench": "8aef2f48befdab5c57cc383a521711fe11c2df98",
+    "patronus-ai/financebench": "cc39aeb4afdf33909ee1412188bf89035950c2eb",
+    "TheFinAI/finben-finer-ord": "1a235081039192371efe56c4bfd340edd25144ea",
+    "TheFinAI/flare-convfinqa": "a24fb040ac27d8045e4afcdbf3e126299cc731bb",
+    "TheFinAI/finben-fomc": "e1f823e0e71556d0a2c1206b71310e564cae8dd4",
+    "TheFinAI/flare-fomc": "e1f823e0e71556d0a2c1206b71310e564cae8dd4",
+    "TheFinAI/flare-finred": "af34b2c8c3cc4bae61eee23cfaf0f0783eb800b2",
+    "TheFinAI/flare-fnxl": "8bea408feb61295e0a31499e31d0291896d0d6ba",
+    "TheFinAI/flare-tatqa": "1cf60f0c2c2c7ef6153b1842a5aa79509da568ba",
+}
+
+
+def pin(repo):
+    return PINS.get(repo, "main")
 
 
 def curl(url, dst, timeout=300, tries=4):
@@ -68,7 +86,8 @@ def download_financebench():
     print("\n[FinanceBench] github.com/patronus-ai/financebench")
     for p in FINANCEBENCH_FILES:
         dst = os.path.join(SRC, "FinanceBench", p)
-        ok = curl(JSDELIVR.format(repo="patronus-ai/financebench", branch="main",
+        ok = curl(JSDELIVR.format(repo="patronus-ai/financebench",
+                                  branch=pin("patronus-ai/financebench"),
                                   path=urllib.parse.quote(p)), dst)
         if not ok:
             ok = curl(RAW.format(repo="patronus-ai/financebench", branch="main",
@@ -84,7 +103,8 @@ FVB_KEEP_FILE = ("requirements.txt", "run_pipeline.sh", "test_api.py", ".gitigno
 
 
 def download_finverbench():
-    repo, branch = "SiluPanda/finverification-bench", "main"
+    repo = "SiluPanda/finverification-bench"
+    branch = pin(repo)
     print("\n[FinVerBench] github.com/{}".format(repo))
     tree = curl_json(GH_API_TREE.format(repo=repo, branch=branch))
     if not tree or "tree" not in tree:
@@ -122,7 +142,8 @@ FINBEN_GATED = ["flare-finqa", "flare-fpb", "flare-fiqasa", "flare-ectsum", "fla
 def download_finben():
     print("\n[FinBen] huggingface.co/TheFinAI")
     for ds in FINBEN_OPEN:
-        tree = curl_json(HF_TREE.format(repo="TheFinAI/" + ds))
+        rev = pin("TheFinAI/" + ds)
+        tree = curl_json(HF_TREE.format(repo="TheFinAI/" + ds, rev=rev))
         if not tree:
             print("   {} 清单获取失败".format(ds))
             continue
@@ -132,7 +153,8 @@ def download_finben():
             dst = os.path.join(SRC, "FinBen", ds, s["path"])
             if os.path.exists(dst) and (not s.get("size") or os.path.getsize(dst) == s["size"]):
                 continue
-            ok = curl(HF.format(repo="TheFinAI/" + ds, path=urllib.parse.quote(s["path"])), dst)
+            ok = curl(HF.format(repo="TheFinAI/" + ds, rev=rev,
+                                path=urllib.parse.quote(s["path"])), dst)
             print("   {} {} {}".format("OK  " if ok else "FAIL", ds, s["path"]))
     print("   受限(需授权)子任务，已跳过：{}".format(", ".join(FINBEN_GATED)))
 

@@ -1,84 +1,106 @@
-# 外部基准集成说明
+# 接入说明（INTEGRATION）—— 给队友
 
-本目录补充引入 **FinVerBench / FinanceBench / FinBen** 三份公开金融基准，作为 FinED-Bench 主线之外的"一致性检测 / 数值纠错 / 错误注入模板"补充评测与样本源。
+本目录把 FinVerBench / FinanceBench / FinBen 三个公开基准整理成**外部专项评测集**。
+本文说明：怎么接、会影响什么、怎么跑第一次、以及本次 PR 的内容。
 
-## 与主线（FinED-Bench v2）的关系
+---
 
-- **不改动** `data/v2/` 下已有的 997 篇固定划分（开发 598 / 评测 200 / 保留 199），不影响现有 `evals/run_v2.py` 流程。
-- **仅作为外部补充**：
-  1. **错误类型模板**：FinVerBench 的 AE（算术）/ CL（跨表勾稽）/ YOY（同比连续性）/ MR（量级扰动）四类注入规则，可借鉴用于研报数值矛盾的合成负例，扩展 `negative_review` 难负例池。
-  2. **事实一致性 / 证据回溯**：FinanceBench 提供 SEC 10-K 上的问答 + 证据片段，可用于评估 factcheck 模块在"找证据—核实结论"链路上的召回率。
-  3. **混合子任务**：FinBen 下的 `flare-fnxl`（财报数字标签）、`flare-tatqa`（表格数值推理）、`flare-convfinqa`（多轮财务问答）可直接作为单能力回归测试。
-- **统一视图**：`data/unified_consistency_samples.jsonl` 已把三份基准归一为 `{source, task, text, error_span, correction, label, error_type, evidence}` 公共字段，便于混合评测。
-
-## 文件清单
-
-```
-evals/external_benchmarks/
-├── README.md                       # 本文件
-├── SCHEMA.md                       # 所有 .jsonl 的字段定义
-├── SOURCES.md                      # 原始下载来源、许可证、受限子集说明
-├── LICENSE_NOTES.md                # 各基准原许可证摘要（MIT/CC-BY-SA-4.0/CC-BY-NC-SA-4.0）
-├── requirements.txt                # 运行 build_datasets.py 的依赖（pandas、tqdm）
-├── data/
-│   ├── finverbench_consistency_detection.jsonl   # 1985 条一致性判定（含 label）
-│   ├── finverbench_statement_correction.jsonl    # 1942 条"错误报表→正确报表"纠错对
-│   ├── financebench_fact_consistency.jsonl       # 150 条事实一致性 / 证据回溯（含 evidence_text）
-│   ├── financebench_correction_pairs.jsonl       # 111 条数值断言纠错三元组（原句/错误/正确）
-│   ├── unified_consistency_samples.jsonl         # 2207 条统一视图混合评测
-│   └── finben/                                   # FinBen 7 个子任务（见下）
-│       ├── finben-finer-ord.jsonl                # 金融命名实体（粗+细标签）
-│       ├── finben-fomc.jsonl / flare-fomc.jsonl  # FOMC 货币政策立场分类
-│       ├── flare-finred.jsonl                    # 金融关系抽取
-│       ├── flare-fnxl.jsonl                      # 财报数字 XBRL 标签抽取
-│       ├── flare-tatqa.jsonl                     # 表格数值问答
-│       └── flare-convfinqa.jsonl.gz              # 多轮财务对话问答（gzip）
-└── scripts/
-    └── build_datasets.py            # 可复现：从 sources 原始文件重建本目录 data/
-```
-
-## 快速使用
+## 1. 一句话：怎么接
 
 ```bash
-pip install -r evals/external_benchmarks/requirements.txt
+cd evals/external_benchmarks
+pip install -r requirements.txt
 
-# 跑一致性判定基线（示例：模型直接检测，随机负例）
-python3 -c "
-import json
-from pathlib import Path
-rows = [json.loads(l) for l in Path('evals/external_benchmarks/data/finverbench_consistency_detection.jsonl').open()]
-print('FinVerBench 总量:', len(rows))
-print('标签分布:')
-from collections import Counter
-print(Counter(r['label_text'] for r in rows))
-print('错误类型分布:')
-print(Counter(r.get('error_type','clean') for r in rows).most_common(10))
-"
-
-# 统一视图混合评测加载器示例
-def load_unified(path='evals/external_benchmarks/data/unified_consistency_samples.jsonl'):
-    import json
-    with open(path) as f:
-        for line in f:
-            yield json.loads(line)
+python3 scripts/verify_datasets.py   # 20 项数据复检，应全 PASS
+python3 scripts/smoke_test.py        # 小批联调：输入→预测→评分 全链路
 ```
 
-## 建议接入点
+```python
+import sys; sys.path.insert(0, "evals/external_benchmarks/scripts")
+from scorers import load_task, evaluate
 
-1. **扩展难负例**：从 `finverbench_statement_correction.jsonl` 抽取 AE/CL/YOY 类错误，转成 FinED-Bench 的错误 schema 后追加到 `data/v2/negative_review.jsonl`（仍需人工审核后 `approve-import`，不自动注入）。
-2. **数值子模块单测**：`flare-fnxl.jsonl` 可直接用于验证 `factcheck/src/` 中数值/单位/期间抽取的正确性。
-3. **跨报告一致性评估**：`finverbench_consistency_detection.jsonl` 天然对应"研报—财报配对核查"场景，可独立于 FinED-Bench 跑一条一致性检测评测线。
-4. **证据召回评测**：`financebench_fact_consistency.jsonl` 自带 `evidence_text` + `page_ref`，可评估 RAG 检索段落在事实核验中的召回。
+recs = load_task("finverbench_detection", split="test")   # 1521 条
+preds = my_model(recs)                                     # 只喂 rec["input"]
+print(evaluate("finverbench_detection", recs, preds))
+```
 
-## 受限数据说明（重要）
+---
 
-FinBen 中 **5 个子集因 HuggingFace 许可限制未能匿名下载**：`flare-finqa`、`flare-fpb`、`flare-fiqasa`、`flare-ectsum`、`flare-multifin-en`。SOURCES.md 已列出授权链接与替代源（如 FinQA 原始 GitHub、Financial PhraseBank），需要时由具有 HF 账号与 dataset 授权的队友在本地运行 `scripts/build_datasets.py --with-restricted` 补齐。
+## 2. 对现有代码/数据的影响
 
-## 许可证
+**完全追加式，不改动主仓任何既有内容**：
 
-本目录引入的三个基准分别遵循：
-- FinVerBench：MIT
-- FinanceBench：MIT License（Patronus AI）
-- FinBen / FLARE：CC-BY-SA-4.0（部分子任务 CC-BY-NC-SA-4.0，见 LICENSE_NOTES.md）
+| 动作 | 说明 |
+|---|---|
+| 新增 `evals/external_benchmarks/` | 独立目录，自包含 |
+| `.gitignore` 新增 3 行 | 忽略 `sources/`（原始下载缓存）、`__pycache__/`，并豁免 `evals/external_benchmarks/data/`（否则会被全局 `data/` 规则挡掉） |
+| 现有 `data/v2/` 划分、hash、`eval_oct05` 命名 | **一行未动** |
+| 主仓依赖 | 未新增；本目录自带 `requirements.txt`（仅 pandas/pyarrow，且只有 FinBen 的 parquet 解析需要） |
 
-均允许学术研究与再分发；商用/竞赛使用前请再次核对各上游 LICENSE 最新版本。
+`evals/datasets.md` 顶部加了一行外部基准交叉引用（更新日期 2026-10-08），其余内容未动。
+
+---
+
+## 3. 与主线字段约定的对接
+
+主线（`evals/dataset_prepare.py`）用 `doc_id` + `content`，答案单独放 `gold.*.jsonl`。
+本目录**沿用同样的文件命名** `inputs.<split>.jsonl` / `gold.<split>.jsonl`，
+只需经 `scripts/adapters.py` 转一次字段名：
+
+```python
+from adapters import to_project_inputs, to_project_gold
+
+ins  = to_project_inputs("finverbench_detection", "test")   # [{"doc_id","content","meta"}]
+gold = to_project_gold("finverbench_detection", "test")     # [{"doc_id","has_error",...}]
+```
+
+`CONTENT_FIELD` 定义了每个任务的"正文"取哪个字段（例如 `finverbench_detection` 取 `context`、
+`financebench_claim_verification` 取 `evidence_text`）。
+
+---
+
+## 4. 建议的接入顺序（先小批，再正式）
+
+1. **冻结构建**：`python3 scripts/build_datasets.py` 可幂等重建；产物的 sha256 在 `MANIFEST.json`。
+2. **只读 dev**：用 `splits/dev.jsonl` 里的样本调通输入、输出、定位、计分四件事。
+3. **接评分器**：`scorers.py` 已按任务给出指标；**不要**把不同任务合成一个"整体纠错准确率"。
+4. **跑冻结的 test**：`splits/test.jsonl`，官方 test 划分（FinBen）只作评测。
+5. **中文样本另建**：英文公开基准不能替代团队真实交付能力，仍需人工确认的中文研报样本。
+
+---
+
+## 5. 评测时必须注意的三条口径
+
+1. **模型只能看 inputs**。`gold` 里有 `error_type` / `original_value` / `modified_value` /
+   `corrected_text` / `src_instance_id`（含 `__clean`、错误类型），**任何一个进入提示词都算泄漏**。
+   `verify_datasets.py` 会断言 inputs 不含这些字段。
+2. **检测任务别只看准确率**。FinVerBench 1,985 条里 1,942 条"有错"，全答"有错"准确率 **97.83%**。
+   必须同时报 `error_recall` / `error_precision` / `false_positive_rate` / 各 `error_type` 召回。
+3. **`financebench_qa` 测的是"给定证据后的核验"**。证据页随输入给出，
+   不能据此证明全文检索能力；全文检索要用不带证据的设定单独测。
+
+---
+
+## 6. 已知局限（务必知悉）
+
+- FinVerBench 上游有缺陷：120 条"错误文本==正确文本"已隔离，但**其余 1822 条也只过了这一项检查**。
+- 干净样本只有 43 条 → 误报率方差大，**须在 test 上评估**（dev 里只有 10 条干净样本）。
+- `financebench_correction` 的错误是规则扰动（**+8% 上偏，单数字**），不代表真人错误形态。
+- 检测/纠错/索引之间存在派生关系，**行数相加 ≠ 独立样本数**；FOMC 重复已去除。
+- 5 个 FinBen 子集（finqa/fpb/fiqasa/ectsum/multifin-en）需授权，未纳入。
+- 许可：两个 GitHub 来源**未声明 SPDX 许可**，FinBen 部分子集为 `cc-by-nc-4.0` →
+  整体**仅限学术研究与非商业评测**，详见 `LICENSE_NOTES.md`。
+
+---
+
+## 7. 本次 PR 的内容
+
+- 版本：**v2（2026-10-08 数据修订版）**，v1 的 4 个数据缺陷 + 2 个放大结果的问题已修复，
+  证据见 `AUDIT_REPORT.md`。
+- 新增文件：`evals/external_benchmarks/` 下
+  `README.md`、`SCHEMA.md`、`SOURCES.md`、`LICENSE_NOTES.md`、`INTEGRATION.md`、`AUDIT_REPORT.md`、
+  `MANIFEST.json`、`requirements.txt`、`scripts/`（6 个脚本）、`data/`、`splits/`、`audit/`。
+- 现有文件改动：`.gitignore`（+3 行）、`evals/datasets.md`（+1 行交叉引用）。
+
+**合并方式**：仓库 → Pull requests → 对应 PR → Squash and merge。
+若 `data/` 下的大文件在 diff 里显示异常，属正常（JSONL 以"每行一条"存储，行数 = 样本数）。

@@ -1,32 +1,29 @@
-# 数据来源、许可与下载通道
+# 数据来源、版本冻结、许可与下载通道（v2）
 
-本仓库的数据全部来自三个公开基准。本文件记录**来源、下载地址、许可、引用方式**，
-以及本环境实际的**下载通道**（因为 github.com / huggingface.co 主站访问受限）。
+本目录数据全部来自三个公开基准。本文件记录**来源、固定版本、文件校验、许可、引用方式**，
+以及本环境实测可用的**下载通道**（github.com / huggingface.co 主站直连受限）。
+
+> **冻结原则**：`audit/source_hashes.json` 里记录的 **sha256 是唯一权威冻结依据**；
+> 下表 revision 用于溯源，便于重新下载时对齐。
 
 ---
 
-## 1. FinanceBench
+## 1. 版本锚点（2026-10-08 核对）
 
-| 项 | 内容 |
-|---|---|
-| 全称 | FinanceBench: A New Benchmark for Financial Question Answering |
-| 仓库 | https://github.com/patronus-ai/financebench |
-| 数据规模 | 开源样本 **150** 条问答；完整版 10,231 题；配套 361 条文档元信息 |
-| 数据文件 | `data/financebench_open_source.jsonl`、`data/financebench_document_information.jsonl` |
-| 许可 | 仓库未附 SPDX 许可文件，使用时请以仓库页声明为准（学术研究用途） |
-| 引用 | Islam et al. 2023, arXiv:2311.11944 |
+| 来源 | 仓库 / 数据集 | 固定 revision | revision 日期 |
+|---|---|---|---|
+| FinVerBench | `SiluPanda/finverification-bench` | `8aef2f48befdab5c57cc383a521711fe11c2df98` | 2026-03-17 |
+| FinanceBench | `patronus-ai/financebench` | `cc39aeb4afdf33909ee1412188bf89035950c2eb` | 2024-12-03 |
+| FinBen · finben-finer-ord | `TheFinAI/en-finer-ord` | `1a235081039192371efe56c4bfd340edd25144ea` | — |
+| FinBen · flare-convfinqa | `TheFinAI/en-convfinqa` | `a24fb040ac27d8045e4afcdbf3e126299cc731bb` | — |
+| FinBen · flare-fomc | `TheFinAI/en-fomc` | `e1f823e0e71556d0a2c1206b71310e564cae8dd4` | — |
+| FinBen · finben-fomc | `TheFinAI/en-fomc` | `e1f823e0e71556d0a2c1206b71310e564cae8dd4` | 与 flare-fomc **同一 revision**（内容重复） |
+| FinBen · flare-finred | `TheFinAI/en-finred` | `af34b2c8c3cc4bae61eee23cfaf0f0783eb800b2` | — |
+| FinBen · flare-fnxl | `TheFinAI/en-fnxl` | `8bea408feb61295e0a31499e31d0291896d0d6ba` | — |
+| FinBen · flare-tatqa | `TheFinAI/en-tatqa` | `1cf60f0c2c2c7ef6153b1842a5aa79509da568ba` | — |
 
-**未纳入的部分**：官方仓库的 `pdfs/` 目录约 500 MB（各公司 10-K/10-Q 原文 PDF）。
-如需获取：
-
-```bash
-# 本环境下 github.com 不可直连，用 gh-proxy 整仓打包（约 500 MB）
-curl -L -o financebench.zip \
-  "https://gh-proxy.com/https://github.com/patronus-ai/financebench/archive/refs/heads/main.zip"
-```
-
-> 注：本仓库的 JSONL 中已包含证据原文（`evidence_text` / `context` 字段）与页码，
-> 绝大多数一致性检测 / 事实核验任务无需额外下载 PDF。
+> ⚠️ **命名注意**：FinBen 的 `flare-*` 子集在 HuggingFace 上实际挂载名是 **`en-*`**
+> （`flare-convfinqa` → `en-convfinqa`）。`SOURCES.md` 中的 `flare-*` 是 FinBen 论文里的任务名。
 
 ---
 
@@ -36,89 +33,111 @@ curl -L -o financebench.zip \
 |---|---|
 | 全称 | FinVerBench: Evaluating Large Language Models on Financial Statement Verification |
 | 仓库 | https://github.com/SiluPanda/finverification-bench |
-| 数据规模 | **1985** 个实例（43 家公司；干净 43 条 + 注入错误 1942 条） |
-| 核心文件 | `data/benchmark/benchmark.json`（全量）、`data/benchmark/instances/*.json`（示例）、`data/converted/*.json` |
-| 许可 | 仓库未附 SPDX 许可文件，使用时请以仓库页声明为准 |
-| 参考页面 | https://benchmarklist.com/benchmarks/finverbench/ |
+| 数据规模 | **1,985** 个实例 = 43 条干净 + 1,942 条注入错误；覆盖 43 家标普 500 公司的 SEC 10-K XBRL 财报 |
+| 关键文件 | `data/benchmark/benchmark.json`、`benchmark_stats.json`、`data/converted/*.json`、`paper/` |
+| 许可 | **仓库无 SPDX 许可文件**（GitHub API `license=null`），按学术研究用途使用 |
 
-**未纳入的部分**：`data/raw/` 与 `data/processed/`（原始 XBRL 财报，约 400 MB）。
-本仓库保留 `data/benchmark/`、`data/converted/`、`src/`、`paper/`，已足够复现全部样本。
+**错误注入类型（本目录的"纠错样本模板"来源）**
+
+| 类别 | 具体类型 | 含义 |
+|---|---|---|
+| AE | `AE_ROW_SUM` / `AE_COLUMN_SUM` | 行/列合计不等于各项之和 |
+| CL | `CL_NET_INCOME_TO_RE` / `CL_NET_INCOME_TO_CFS` / `CL_ENDING_CASH` | 跨表勾稽不一致 |
+| YOY | `YOY_OPENING_BALANCE` / `YOY_COMPUTED_CHANGE` | 同比期初期末接不上 |
+| MR | `MR_MINOR`(0.5%) / `MR_MODERATE`(2%) / `MR_SIGNIFICANT`(10%) / `MR_EXTREME`(25%) | 量级扰动 |
+
+**已知上游局限**：部分注入错误落在 `formatted_statements` 未呈现的结构化字段上，
+导致约 120 条样本的可见文本与正确文本相同（上游论文亦承认）。本目录已隔离这批样本。
 
 ---
 
-## 3. FinBen
+## 3. FinanceBench
+
+| 项 | 内容 |
+|---|---|
+| 全称 | FinanceBench: A New Benchmark for Financial Question Answering |
+| 仓库 | https://github.com/patronus-ai/financebench |
+| 数据规模 | 开源样本 **150** 条问答（完整版 10,231 题）；配套文档元信息 |
+| 数据文件 | `data/financebench_open_source.jsonl`（150 条，含 `evidence`）、`data/financebench_document_information.jsonl` |
+| 许可 | **仓库无 SPDX 许可文件**（GitHub API `license=null`），README 声明供研究与评估使用 |
+
+**本目录派生的两类样本**
+- 断言核验 204 条：把答案数值按 **+8%** 上偏改写得到"错误断言"，与原断言配对（均衡）。
+- 数值纠错 102 条：给出被改坏的断言，要求还原。
+
+---
+
+## 4. FinBen
 
 | 项 | 内容 |
 |---|---|
 | 全称 | FinBen: A Holistic Financial Benchmark for Large Language Models |
-| 仓库 | https://github.com/The-FinAI/FinBen ；评估框架 https://github.com/The-FinAI/PIXIU |
-| 规模 | 23 类任务 / 35 个数据集（本仓库挑选可公开的信息抽取 / 文本分析 / 数值推理子任务） |
-| 数据托管 | HuggingFace 组织 **TheFinAI**（`finben-*` / `flare-*`） |
-| 许可 | 各子集不同：`finben-*` 标注为 **cc-by-nc-4.0**；`flare-*` 部分为 **mit**，部分未标注；以各数据集页面为准 |
-| 引用 | Xie et al. 2024, arXiv:2402.12659 |
+| 组织 | https://huggingface.co/TheFinAI （原始项目：https://github.com/The-FinAI/FinBen） |
+| 概览页 | https://ssawant.github.io/posts/FinBen/FinBen.html |
+| 覆盖 | 23 类任务 / 35 个数据集 |
 
-### 3.1 已下载（可公开获取）
+**本目录选取的子集**（按"文本分析 / 事实抽取"以及数值推理相关性挑选）
 
-| 子集 | 任务 | 语言 | 获取方式 |
+| 子集 | 条数 | 任务 | 上游许可（已核实） |
 |---|---|---|---|
-| `finben-finer-ord` | 命名实体识别 | en | `hf-mirror.com/datasets/TheFinAI/finben-finer-ord` |
-| `finben-fomc` | 央行立场分类 | en | `hf-mirror.com/datasets/TheFinAI/finben-fomc` |
-| `flare-fomc` | 央行立场分类 | en | 与 finben-fomc 同源 |
-| `flare-finred` | 关系抽取 | en | `hf-mirror.com/datasets/TheFinAI/flare-finred` |
-| `flare-fnxl` | 数字 / XBRL 标签抽取 | en | `hf-mirror.com/datasets/TheFinAI/flare-fnxl` |
-| `flare-tatqa` | 表格+文本数值问答 | en | `hf-mirror.com/datasets/TheFinAI/flare-tatqa` |
-| `flare-convfinqa` | 多轮数值问答 | en | `hf-mirror.com/datasets/TheFinAI/flare-convfinqa` |
+| `flare-fomc`（=`en-fomc`） | 496 | 央行立场分类 | `cc-by-nc-4.0` |
+| `flare-tatqa`（=`en-tatqa`） | 1668 | 表格+文本数值推理 | `cc-by-4.0` |
+| `flare-convfinqa`（=`en-convfinqa`） | 12594 | 多轮数值问答 | `mit` |
+| `finben-finer-ord`（=`en-finer-ord`） | 1075 | 命名实体识别 | `cc-by-nc-4.0` |
+| `flare-finred`（=`en-finred`） | 1068 | 关系抽取 | `other`（自定义） |
+| `flare-fnxl`（=`en-fnxl`） | 318 | 财报数字/XBRL 标签 | `other`（自定义） |
 
-### 3.2 受限（gated，需申请授权后下载）
+> `finben-fomc` 与 `flare-fomc` 内容逐字相同（同一 HF revision），v2 只保留后者。
 
-以下子集在 HuggingFace 上为受限数据集，匿名访问返回
-`403: Access to dataset ... is restricted and you are not in the authorized list`：
+**受限 / 未包含的子集**（需自行申请授权，未纳入本目录）
 
-| 子集 | 任务 | 替代 / 获取方式 |
+| 子集 | 原因 | 替代来源 |
 |---|---|---|
-| `flare-finqa` | 财报数值推理问答 | 原始 FinQA 数据可从 https://github.com/czyssrs/FinQA 获取 |
-| `flare-fpb` | 金融情感（PhraseBank） | 原始 Financial PhraseBank 为公开数据，可自行检索获取 |
-| `flare-fiqasa` | 金融情感 | 原始 FiQA 数据集 |
-| `flare-ectsum` | 财报摘要 | 原始 ECTSum 仓库 |
-| `flare-multifin-en` | 多语言金融 | 需 HF 授权 |
+| `flare-finqa` | 403，需 HF 授权 | FinQA 原始仓库 `casmls/FinQA` |
+| `flare-fpb` | 403，需 HF 授权 | Financial PhraseBank（Malofeeva 等） |
+| `flare-fiqasa` | 403，需 HF 授权 | FIQASA 论文附页 |
+| `flare-ectsum` | 403，需 HF 授权 | ECTSum 论文附页 |
+| `flare-multifin-en` | 403，需 HF 授权 | MultiFin 论文附页 |
 
-授权获取流程：登录 HuggingFace → 打开对应数据集页 → 申请 access →
-在页面内填写理由 → 获批后用带 token 的地址下载：
+带 token 的下载示例（本环境需走镜像）：
 
 ```bash
-export HF_TOKEN=<你的token>
-curl -L -H "Authorization: Bearer $HF_TOKEN" -o data.parquet \
-  "https://huggingface.co/datasets/TheFinAI/flare-finqa/resolve/main/data/test-00000-of-00001-5ed0ee6b1f761c33.parquet"
+export HF_ENDPOINT=https://hf-mirror.com
+export HF_TOKEN=<你的 HuggingFace token>
+python3 -c "
+from huggingface_hub import snapshot_download
+snapshot_download('TheFinAI/en-finqa', repo_type='dataset',
+                  revision='main', local_dir='sources/FinBen/flare-finqa')
+"
 ```
 
 ---
 
-## 4. 本环境使用的下载通道（重要）
+## 5. 本环境实测可用的下载通道
 
-| 目标 | 主站是否可达 | 实际使用通道 |
+| 目标 | 直连 | 可用替代 |
 |---|---|---|
-| github.com（网页/克隆） | ❌ 不可达 | `gh-proxy.com/<原始URL>`（打包 zip） |
-| api.github.com（取文件清单） | ✅ 可达 | 直接调用 |
-| raw.githubusercontent.com | ⚠️ 可达但严重限速 | 回退通道 |
-| cdn.jsdelivr.net（GitHub CDN） | ✅ 可达且快 | **首选**，单文件下载 |
-| huggingface.co | ❌ 不可达 | `hf-mirror.com`（镜像） |
+| GitHub raw / release | ❌ | `https://cdn.jsdelivr.net/gh/<owner>/<repo>@<rev>/<path>`、`https://gh-proxy.com/https://github.com/...` |
+| GitHub codeload（仓库 zip） | ⚠️ 不稳定 | `https://codeload.github.com/<owner>/<repo>/zip/refs/heads/main` 重试 |
+| GitHub API | ✅ | 直接可用 |
+| HuggingFace | ❌ | `https://hf-mirror.com`（hf CLI 设 `HF_ENDPOINT`） |
 
-`scripts/download_all.py` 已按上表封装好回退逻辑，可直接复用。
+`scripts/download_all.py` 已封装上述镜像与重试逻辑，并支持按 revision 固定下载。
 
 ---
 
-## 5. 统一引用（BibTeX）
+## 6. 引用
 
 ```bibtex
-@misc{islam2023financebench,
-  title={FinanceBench: A New Benchmark for Financial Question Answering},
-  author={Pranab Islam and Anand Kannappan and Douwe Kiela and Rebecca Qian and Nino Scherrer and Bertie Vidgen},
-  year={2023}, eprint={2311.11944}, archivePrefix={arXiv}, primaryClass={cs.CL}
-}
-
 @misc{finverbench2026,
   title={FinVerBench: Evaluating Large Language Models on Financial Statement Verification},
   year={2026}, note={https://github.com/SiluPanda/finverification-bench}
+}
+
+@article{islam2023financebench,
+  title={FinanceBench: A New Benchmark for Financial Question Answering},
+  author={Islam, Pranab and Kannappan, Anand and Kiela, Douwe and others},
+  year={2023}, eprint={2311.11944}, archivePrefix={arXiv}, primaryClass={cs.CL}
 }
 
 @inproceedings{xie2024finben,
@@ -127,3 +146,5 @@ curl -L -H "Authorization: Bearer $HF_TOKEN" -o data.parquet \
   year={2024}, eprint={2402.12659}, archivePrefix={arXiv}, primaryClass={cs.CL}
 }
 ```
+
+许可细节与逐来源核实结论见 `LICENSE_NOTES.md`。
