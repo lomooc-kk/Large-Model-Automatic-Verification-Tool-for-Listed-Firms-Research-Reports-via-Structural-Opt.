@@ -1,6 +1,6 @@
 # 第二版数据清单与使用边界
 
-更新日期：2026-10-03。主线为 FinED-Bench，先做零训练对照，不以微调作为第二版交付前提。
+更新日期：2026-10-08。主线为 FinED-Bench，先做零训练对照，不以微调作为第二版交付前提。
 
 ## 已有本地材料
 
@@ -42,3 +42,7 @@ FinED-Bench 标准文本均含错，不能独立测得正确内容误报率。�
 其他金融问答、解析或微调数据集不是本轮依赖，不根据过去未核验的规模、许可或租卡价格制定训练预算。未来只有在对照结果明确暴露可通过训练修复的短板时，才单独立项微调、核验许可与成本。本轮不承诺 LoRA 或云端训练效果。
 
 运行与评分见 [README.md](README.md)，完整复现见 [第二版实施说明](../docs/V2_IMPLEMENTATION.md)。原始数据与派生答案保持本地，分享前按数据发布方现行许可核验。
+
+## 外部一致性基准专项评测集
+
+`evals/external_benchmarks/` 收录了 FinVerBench、FinanceBench、FinBen 的可公开获取子集，经数据缺陷清洗后作为**外部专项评测集**接入。所有样本按任务分离 inputs/gold，独立评分器见 `scripts/scorers.py`，接入适配器见 `scripts/adapters.py`。使用边界与已知限制见该目录下 `README.md` 与 `AUDIT_REPORT.md`：FinVerBench 干净样本仅 43 条（dev 10 条），误报率须以 test 集评估；FinanceBench-correction 为 +8% 规则扰动，可作负样本基线但不等同于真实人类错误；ConvFinQA/FOMC 等任务按各自划分独立评分，不与研报纠错主指标混算。
