@@ -66,7 +66,8 @@ FinanceBench: label=0 -> inconsistent   111 条     ← 方向相反
 - `对应检测样本已打模糊标记 → 162`
 
 **残余风险（务必知悉）**：其余 1822 对**只通过了这一项检查**，不等于全部合格；
-且检测集中干净样本仅 43 条，误报率估计方差大。
+且检测集干净样本剔除模糊后仅剩 dev 0 / test 1 条，**该任务的误报率不可评估**
+（误报率改用 `financebench_claim_verification`，见 §7 注）。
 
 ---
 
@@ -168,8 +169,11 @@ FinanceBench: label=0 -> inconsistent   111 条     ← 方向相反
 | finben/flare-convfinqa | 2251 | 10343 |
 | 其余 FinBen（官方 test-only） | 0 | 4625 |
 
-> 注意：FinVerBench 检测在 dev 中只有 **10 条**干净样本（test 中 33 条），
-> 因此 dev 上的误报率基本不可用，**误报率必须在 test 上评估**。
+> 注意（v2 复检修正）：FinVerBench 检测集干净样本本就稀少（dev 10 / test 33），且其中绝大多数
+> 是"同正文双标签"的模糊样本。剔除 `ambiguous_visible_text` 后，**可用干净样本 dev = 0 条、
+> test = 1 条**，多数类基线被推到 dev 100% / test 99.93%。因此 **FinVerBench 的
+> `false_positive_rate` 无统计意义，不能作为误报率口径**。
+> 误报率请改用 `financebench_claim_verification`：test 82 有错 / 82 干净，完全均衡，基线 50%。
 
 ---
 

@@ -46,7 +46,10 @@ PINS = {
 
 
 def pin(repo):
-    return PINS.get(repo, "main")
+    if repo not in PINS:
+        raise KeyError(
+            "仓库 {} 未固定版本；请先加入 PINS 后再下载（本脚本禁止追踪 main）".format(repo))
+    return PINS[repo]
 
 
 def curl(url, dst, timeout=300, tries=4):
@@ -90,7 +93,10 @@ def download_financebench():
                                   branch=pin("patronus-ai/financebench"),
                                   path=urllib.parse.quote(p)), dst)
         if not ok:
-            ok = curl(RAW.format(repo="patronus-ai/financebench", branch="main",
+            # 回退同样按 PINS 固定版本下载，不追踪 main；
+            # 真正的冻结依据是 audit/source_hashes.json 里的 sha256。
+            ok = curl(RAW.format(repo="patronus-ai/financebench",
+                                 branch=pin("patronus-ai/financebench"),
                                  path=urllib.parse.quote(p)), dst)
         print("   {} {}".format("OK  " if ok else "FAIL", p))
 

@@ -23,6 +23,8 @@
 | F4 | ConvFinQA 混装 train/valid/test，12,594 行仅 8,891 个唯一 id | 按划分分文件；`sample_id` 全局唯一（12,594/12,594） |
 | E1 | 两份 FOMC 内容逐字相同，会重复计数 | 只保留 `flare-fomc` 一份计分副本 |
 | E2 | `sample_id` 泄漏答案（`__clean` / `_wrong` / `_right` / 含 `error_type`） | 改为中性顺序 id，原始 id 只留在 `gold/` 与 `audit/` |
+| E3 | 文档称"误报率须在 test 上评估"，但 FinVerBench 剔除模糊样本后干净样本仅 dev 0 / test 1 | 更正口径：该任务 `false_positive_rate` 不可评估，误报率改用 `financebench_claim_verification`（82 错/82 净，均衡） |
+| E4 | `download_all.py` 失败回退分支写死 `branch="main"`，与"不追踪 main"矛盾 | 回退改按 `PINS` 固定版本；`pin()` 对未固定仓库直接报错 |  
 
 ---
 
@@ -126,6 +128,8 @@ print(evaluate("finverbench_detection", recs, preds))
    混在一个数字里没有意义（对应评审意见）。
 3. **检测类必须报告** `error_recall` / `error_precision` / `false_positive_rate` +
    各 `error_type` 召回。FinVerBench 有 97.8% 的"有错"占比，全答"有错"就有 97.83% 准确率。
+   注意：`false_positive_rate` 请用 `financebench_claim_verification` 报告（FinVerBench 干净样本
+   剔除模糊后几乎为 0，详见 §6）。
 4. **划分**：`splits/dev.jsonl` 用于开发与联调，`splits/test.jsonl` 用于正式评测。
    划分按**原始文档分组**（FinVerBench 按公司+期间、FinanceBench 按文档、
    ConvFinQA 按"划分+对话"），同一份报表的 clean/注错/纠错版本永远在同一组。
@@ -140,8 +144,10 @@ print(evaluate("finverbench_detection", recs, preds))
 - **FinVerBench 上游本身有瑕疵**：部分错误注入在 `formatted_statements` 未呈现的结构化字段里，
   导致 v1 出现 120 条"错误文本 == 正确文本"。v2 已隔离这 120 条，但**其余 1822 条也只通过了这一项检查**，
   上游论文亦承认该局限。
-- **检测样本类别严重不均衡**（干净 43 / 有错 1942），干净样本仅 43 条，
-  误报率估计方差大，建议同时报告置信区间，或只把干净样本作为"误报抽查"。
+- **FinVerBench 检测集测不出误报率**：干净样本共 43 条（有错 1942），但其中 42 条本身就是
+  "同正文双标签"的模糊样本（已打 `ambiguous_visible_text`）。剔除后**可用干净样本 dev 仅 0 条、
+  test 仅 1 条**，多数类基线被推到 dev 100% / test 99.93%，`false_positive_rate` 无统计意义。
+  **误报率口径请改用 `financebench_claim_verification`**（test 82 有错 / 82 干净，完全均衡，基线 50%）。
 - **`financebench_correction` 由规则生成**：固定 **+8%**（上偏，非 ±8%）数值扰动，
   只改一个数字、其余逐字保留，因此错误定位精确但**不代表真人错误形态**。
 - **FinBen 子任务与研报事实纠错目标距离较远**（信息抽取/立场分类），仅作辅助评测。

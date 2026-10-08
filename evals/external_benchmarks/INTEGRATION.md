@@ -76,6 +76,7 @@ gold = to_project_gold("finverbench_detection", "test")     # [{"doc_id","has_er
    `verify_datasets.py` 会断言 inputs 不含这些字段。
 2. **检测任务别只看准确率**。FinVerBench 1,985 条里 1,942 条"有错"，全答"有错"准确率 **97.83%**。
    必须同时报 `error_recall` / `error_precision` / `false_positive_rate` / 各 `error_type` 召回。
+   其中 `false_positive_rate` 请用 `financebench_claim_verification` 报告（FinVerBench 干净样本剔除模糊后≈0）。
 3. **`financebench_qa` 测的是"给定证据后的核验"**。证据页随输入给出，
    不能据此证明全文检索能力；全文检索要用不带证据的设定单独测。
 
@@ -84,7 +85,9 @@ gold = to_project_gold("finverbench_detection", "test")     # [{"doc_id","has_er
 ## 6. 已知局限（务必知悉）
 
 - FinVerBench 上游有缺陷：120 条"错误文本==正确文本"已隔离，但**其余 1822 条也只过了这一项检查**。
-- 干净样本只有 43 条 → 误报率方差大，**须在 test 上评估**（dev 里只有 10 条干净样本）。
+- **FinVerBench 测不出误报率**：干净样本共 43 条，但剔除 `ambiguous_visible_text` 模糊样本后
+  **dev = 0 条、test 仅 1 条**，`false_positive_rate` 无统计意义。误报率请用
+  `financebench_claim_verification`（test 82 错 / 82 净，均衡，基线 50%）。
 - `financebench_correction` 的错误是规则扰动（**+8% 上偏，单数字**），不代表真人错误形态。
 - 检测/纠错/索引之间存在派生关系，**行数相加 ≠ 独立样本数**；FOMC 重复已去除。
 - 5 个 FinBen 子集（finqa/fpb/fiqasa/ectsum/multifin-en）需授权，未纳入。
