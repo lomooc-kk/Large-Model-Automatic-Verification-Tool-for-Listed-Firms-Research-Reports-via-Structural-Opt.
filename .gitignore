@@ -33,3 +33,5 @@ Thumbs.db
 /artifacts/case-diagnostics-20261005/validation.json
 /artifacts/case-diagnostics-20261005/ui_validation.json
 /artifacts/case-diagnostics-20261005/review_validation.json
+# External benchmarks: keep cached source blobs out of repo
+evals/external_benchmarks/sources/
