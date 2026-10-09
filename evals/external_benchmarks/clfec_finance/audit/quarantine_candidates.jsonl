@@ -1,0 +1,6 @@
+{"source_id": "a39d0a78-8a26-4cfd-ab6a-83bab7fbfe6e", "domain": "Law", "split": "mix", "reason": ["apply_mismatch"]}
+{"source_id": "fdde60bb-2bf9-4522-9bb2-cce21cbd4ae9", "domain": "Law", "split": "mix", "reason": ["apply_mismatch", "span_mismatch"]}
+{"source_id": "e83bac35-1c81-41ce-851e-0645cbd09a8b", "domain": "Law", "split": "no_error", "reason": ["apply_mismatch", "no_error_violation"]}
+{"source_id": "f05484e5-ffae-4081-b9f0-90f23a87efa0", "domain": "Law", "split": "lec_only", "reason": ["apply_mismatch", "span_mismatch"]}
+{"source_id": "0f967842-f68e-4d1e-a1bc-8f2f33be10ed", "domain": "Law", "split": "fec_only", "reason": ["apply_mismatch", "span_mismatch"]}
+{"source_id": "1e968cae-1b2c-495c-88ce-309bb6502ab7", "domain": "Law", "split": "mix", "reason": ["apply_mismatch"]}
