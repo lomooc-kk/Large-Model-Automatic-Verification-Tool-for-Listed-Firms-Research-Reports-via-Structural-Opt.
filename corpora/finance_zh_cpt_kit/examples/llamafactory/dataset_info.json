@@ -1,0 +1,14 @@
+{
+  "finance_zh_cpt": {
+    "file_name": "finance_zh.train.jsonl",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "finance_zh_cpt_val": {
+    "file_name": "finance_zh.val.jsonl",
+    "columns": {
+      "prompt": "text"
+    }
+  }
+}
