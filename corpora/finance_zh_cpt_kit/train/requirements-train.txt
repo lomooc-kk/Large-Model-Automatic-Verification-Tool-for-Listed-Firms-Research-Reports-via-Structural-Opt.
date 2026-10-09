@@ -1,0 +1,18 @@
+# 金融领域语料库 · CPT 训练环境依赖
+# 安装：pip install -r train/requirements-train.txt
+#
+# 说明：
+#   - torch 请按你的 CUDA 版本单独安装，例如：
+#       CUDA 12.1:  pip install torch --index-url https://download.pytorch.org/whl/cu121
+#       CUDA 11.8:  pip install torch --index-url https://download.pytorch.org/whl/cu118
+#       仅 CPU  :  pip install torch --index-url https://download.pytorch.org/whl/cpu
+#     上面的地址二选一即可，装完再执行本文件。
+#   - 国内下载慢可加清华源： -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+transformers>=4.44.0
+datasets>=2.20.0
+accelerate>=0.33.0
+peft>=0.12.0            # 使用 --use_lora 时需要
+sentencepiece>=0.2.0    # 部分分词器（Llama 系）需要
+protobuf>=4.25.0
+tensorboard>=2.15.0     # --report_to tensorboard 时用，可选
