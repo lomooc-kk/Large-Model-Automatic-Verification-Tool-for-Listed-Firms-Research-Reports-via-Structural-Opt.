@@ -5,11 +5,23 @@
 本仓库用于 2026 年北京市金融人工智能比赛的参赛作品开发，五人并行推进，各模块独立可跑、
 按统一字段对接。当前进度以 `docs/` 下的记录与实际代码为准。
 
-## 第二版：FinED-Bench（2026-10-04 阶段交接）
+## 当前交付（2026-10-10）
+
+最新草稿版本见 [Pi/OpenViking、节点与新研报实测进展](docs/PR_PROGRESS_20261010.md)。已首次尝试 7 个新来源、50 页，6 篇完整执行、5 篇同时候选定位完整；95% 旧错例目标未达到，新研报还不能报告完整业务 F1。Pi/OpenViking 有独立的集成验证，但尚未在这七篇中文研报主路径中验证收益。
+
+## 当前迭代使用新数据，旧案例保留诊断
+
+2026-10-09 起，旧 FinED、442 篇及其抽样只用于发现典型问题和追溯历史，不再进入下一轮训练示例、效果验证或评分分母。当前入口是 [新数据与节点迭代](docs/ACTIVE_DATASET_ITERATION.md)、[当前数据配置](evals/current_dataset.json) 和 `evals/run_active_suite.py`。
+
+首轮新数据完整对照已完成：[结果与采用范围](docs/NEW_DATA_VALIDATION_20261009.md)、[架构与运行方式](docs/PI_OPENVIKING_IMPLEMENTATION.md)。本地 Archify 交互图保留于 `output/active-suite-20261009/iteration-architecture.html`。中文纠错整体候选在本批验证上改善；声明任务仍有精度口径待审定，复杂判读链保留实验用途，不将两轨分数合并为比赛成绩。
+
+新数据分为中文段落纠错与有证据声明核查两条任务，分别评分。开发数据用于节点和提示调优，验证数据用于迭代比较，封存候选默认禁止运行。Pi 与 OpenViking 已接通；新增节点须通过新数据对照后再决定是否进入默认流程。
+
+## 历史第二版 FinED-Bench 诊断记录
 
 2026-10-05 新增：[442 篇重跑 R01 证据包](artifacts/research442-rerun-20261005/README.md)。包括同批输入、三组预测、原始响应、冻结源码/提示、哈希及逐条 TP/FP/FN 离线复算；这是新批次，不是已删除旧批次的恢复，也不代表当前 main 的新推理效果。
 
-本轮学习依据是 **《Are Large Language Models Reliable Reviewers? A Benchmark for Error Detection in Financial Documents》及其 FinED-Bench 数据集**。本地原文为相邻论文目录中的 `2026.findings-acl.1481.pdf`。FinRiskAtlas 是另一篇论文，其已有操作级分析仅保留为可选工具，不是本轮主线。
+历史第二版学习依据是 **《Are Large Language Models Reliable Reviewers? A Benchmark for Error Detection in Financial Documents》及其 FinED-Bench 数据集**。本地原文为相邻论文目录中的 `2026.findings-acl.1481.pdf`。这些材料现在只作诊断；当前新数据入口见上方说明。FinRiskAtlas 是另一篇论文，其已有操作级分析保留为可选工具。
 
 第二版保留研报—财报配对核查，并新增独立的单份文本检测：保留全文结构和字符偏移，按 15 类错误生成候选，再验证原文锚点与可复算证据。未验证的候选进入复核，空结果合法；没有检出错误不表示全文已被证实正确。
 
@@ -33,6 +45,16 @@
 交接前 B/C 工程 **294 项**（无跳过）、评测工具 **89 项**通过；前端四组配对材料的七个视图完成无新增模型调用的联调。人工正确负例、证据语义支持与真人复核耗时仍未完成。历史小样本中，20 篇新开发样本缓存重放为 20/20 执行完成、0 次新调用，全部提示 F1 为直接模型 46.99%、组合 46.43%；最长 119,714 字符文档另行测试虽无接口/解析失败，但两组均 TP0/FP5/FN4，不能解释为长文效果达标。这些历史试验不与本批混算。
 
 完整边界与交付范围见 [阶段实验与交接边界](docs/V2_SCOPE_AND_HANDOFF.md)。本批推理评分见 [200 篇阶段实验报告](docs/V2_EVAL200_RESULTS.md) 和 [公开汇总计数](docs/validation/v2-eval200/aggregate.json)；前期小样本过程保留在 [历史阶段报告](docs/V2_MODEL_RESULTS.md)。598 篇开发池已经用于小样本调试和离线规则验证，但未执行 598 篇真实模型全量扩跑；199 篇最终保留集未用于模型推理和最终测试。因此不能把本批 200 篇说成项目至今一共只使用了 200 篇，也不能把历史累计 284 次调用当成 284 篇独立文档。运行说明见 [实施文档](docs/V2_IMPLEMENTATION.md)，评分口径见 [评测说明](evals/README.md)，数据范围见 [数据清单](evals/datasets.md)。
+
+## Pi 与 OpenViking 集成（2026-10-09）
+
+新增官方 Pi Agent 运行时、B 模块 OpenViking HTTP 适配器，以及界面「Pi 自动补证」和 `agent-check` / `agent-text` 入口。Pi 安排检测、检索、读原文与再次核查，来源验证和业务结论由原有核查代码负责。旧入口继续用于离线与对照。
+
+测试前已加入数据准入：442 篇只作已曝光回归，外部中文纠错、QA 和声明核验使用各自口径。原文片段节点优化在固定预测、严格评分下使 direct F1 从 68.00% 到 69.23%，hybrid 从 68.48% 到 69.70%；两组各恢复 22 个严格命中。这是历史回放收益，尚无真实 Pi/OpenViking 端到端准确率结果。
+
+构建、运行和服务前提见 [Pi/OpenViking 实施说明](docs/PI_OPENVIKING_IMPLEMENTATION.md)；详细数据及回归证据见 [本轮验证报告](docs/PI_NODE_VALIDATION_20261009.md)。上方及下方保留的 10 月 5 日预算/价格记录属于历史实验，不能用作当前费率。
+
+本机已原生部署 OpenViking 0.4.23 和约 25 MB 的中文 ONNX 向量模型。三份短财报真实入库/检索、三个真实 Pi 合成案例与服务重启后的持久化查询均通过；16 次模型调用保守记账约 0.11 元。启停与边界见 [真实服务验证](docs/LOCAL_PI_SERVICE_VALIDATION_20261009.md)。
 
 ## C 核查模块（2026-09-28）
 

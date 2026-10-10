@@ -26,7 +26,9 @@ DEFAULT_LEDGER = ROOT / "data/v2/model_usage.sqlite3"
 MICROS = Decimal(1_000_000)
 DEFAULT_BUDGET_CNY = Decimal("20")
 AUTHORIZED_BUDGET_CEILING_CNY = Decimal("100")
-JSON_PURPOSES = frozenset({"facts-v1", "text_review.detect", "text_review.global"})
+JSON_PURPOSES = frozenset({"facts-v1", "text_review.detect", "text_review.global",
+                           "claim_verification.direct", "claim_verification.structured",
+                           "correction_review.correct"})
 SAFE_FINISH_REASONS = frozenset({"stop", "length", "tool_calls", "function_call", "content_filter", "insufficient_system_resource"})
 LOCAL_ERROR_CODES = frozenset({"model_response_too_large", "invalid_model_response", "invalid_model_choices",
                                "provider_usage_exceeds_reserved_maximum", "model_output_truncated", "invalid_model_content"})
@@ -275,6 +277,8 @@ class BudgetedChatClient:
             raise ValueError("已超过价格核验有效期；请重新核对费率后再发起调用")
 
     def __call__(self, messages, *, purpose="review"):
+        from .execution_scope import check_active, remaining_timeout
+        check_active()
         # ModelConfig is mutable; reject conflicting changes before reserving funds.
         validate_reasoning_settings(getattr(self.config, "thinking", ""), getattr(self.config, "reasoning_effort", ""))
         estimated = estimate_tokens(messages)
@@ -283,6 +287,7 @@ class BudgetedChatClient:
         maximum = (Decimal(estimated) * self.input_rate + Decimal(self.settings.max_output_tokens) * self.output_rate) / MICROS
         previous_attempts = []
         for attempt in range(self.settings.max_retries + 1):
+            check_active()
             self._check_price_validity()
             trace = {"model": self.config.model, "purpose": purpose, "attempt": attempt,
                      "previous_attempts": list(previous_attempts),
@@ -314,7 +319,7 @@ class BudgetedChatClient:
                     headers["Authorization"] = "Bearer " + self.config.api_key
                 req = urllib.request.Request(self.config.base_url.rstrip("/") + "/chat/completions",
                                              json.dumps(payload, ensure_ascii=False).encode(), headers, method="POST")
-                with self.opener(req, timeout=self.config.timeout) as response:
+                with self.opener(req, timeout=remaining_timeout(self.config.timeout)) as response:
                     raw = response.read(2_000_001)
                 if len(raw) > 2_000_000:
                     raise _ResponseValidationError("model_response_too_large")
@@ -329,6 +334,14 @@ class BudgetedChatClient:
                 choice = choices[0]
                 finish = choice.get("finish_reason")
                 trace["finish_reason"] = finish if isinstance(finish, str) and finish in SAFE_FINISH_REASONS else "unknown"
+                message = choice.get("message")
+                if isinstance(message, dict):
+                    # Count the two output channels without retaining reasoning
+                    # text. Absent/non-string channels remain unknown, not zero.
+                    for field, diagnostic in (("content", "response_content_chars"),
+                                              ("reasoning_content", "reasoning_content_chars")):
+                        value = message.get(field)
+                        trace[diagnostic] = len(value) if isinstance(value, str) else None
                 usage = result.get("usage") or {}
                 if not isinstance(usage, dict):
                     usage = {}
@@ -337,13 +350,16 @@ class BudgetedChatClient:
                 if valid:
                     settled_cost = (Decimal(inp) * self.input_rate + Decimal(out) * self.output_rate) / MICROS
                     trace.update({"input_tokens": inp, "output_tokens": out, "usage_source": "provider"})
+                    details = usage.get("completion_tokens_details")
+                    reasoning_tokens = details.get("reasoning_tokens") if isinstance(details, dict) else None
+                    if type(reasoning_tokens) is int and 0 <= reasoning_tokens <= out:
+                        trace["reasoning_tokens"] = reasoning_tokens
                     if settled_cost > maximum:
                         trace["reservation_exceeded"] = True
                         raise _ResponseValidationError("provider_usage_exceeds_reserved_maximum")
                 else:
                     trace["usage_source"] = "maximum_reservation_no_provider_usage"
                 if choice.get("finish_reason") == "length":
-                    message = choice.get("message")
                     partial = message.get("content") if isinstance(message, dict) else None
                     if isinstance(partial, str):
                         # Preserve returned model text for local truncation audits,
@@ -351,7 +367,6 @@ class BudgetedChatClient:
                         trace["response_content"] = partial.replace(self.config.api_key, "[REDACTED]") if self.config.api_key else partial
                         trace["response_content_incomplete"] = True
                     raise _ResponseValidationError("model_output_truncated")
-                message = choice.get("message")
                 content = message.get("content") if isinstance(message, dict) else None
                 if not isinstance(content, str):
                     raise _ResponseValidationError("invalid_model_content")

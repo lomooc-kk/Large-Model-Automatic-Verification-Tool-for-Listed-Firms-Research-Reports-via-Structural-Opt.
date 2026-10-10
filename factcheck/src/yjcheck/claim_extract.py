@@ -2,12 +2,55 @@
 from __future__ import annotations
 
 import re
+from bisect import bisect_left, bisect_right
 from dataclasses import replace
 from .models import Block, Document, Fact
 
 from .metric_catalog import METRICS, METRIC_RE, STOCK
 
 NUMBER_RE = re.compile(r"(?P<value>[+\-−－]?(?:\d{1,3}(?:[,，]\d{3})+|\d+)(?:\.\d+)?|[（(][\d,，]+(?:\.\d+)?[）)])\s*(?P<unit>(?:亿|万|千)?(?:美元|港元|欧元)|千万元|百万元|亿元|万元|千元|元/股|元／股|元|个百分点|百分点|%|％|倍)")
+
+_RATE_METRICS = frozenset({"gross_margin", "net_margin", "debt_ratio", "pe"})
+_NUMBERED_RECORD_RE = re.compile(
+    r"(?:图表|图|表)\s*[0-9一二三四五六七八九十百]+(?:[-－.]\d+)?\s*[:：]"
+)
+_TABLE_LABEL_RE = re.compile(r"\|?\s*([^\W\d_][^|\r\n]{0,80})\|")
+_RATE_VALUE_LINK_RE = re.compile(
+    r"(?:[、/,，:：|~～—–\-（）()]|以及|分别|约为|达到|录得|"
+    r"同比|环比|增长|增加|提升|提高|上升|下降|减少|下滑|降低|变动|"
+    r"大幅|小幅|明显|显著|持续|进一步|略微|略有|继续|回升|回落|"
+    r"上年同期|去年同期|本年|本期|同期|调整前|调整后|重述前|重述后|"
+    r"20\d{2}年?|[和及为是约由从到至较的])*"
+)
+
+
+def _record_starts(raw: str) -> list[int]:
+    """Explicit new records survive whitespace compaction; wrapped prose does not split."""
+    starts = []
+    for line in re.finditer(r"(?m)^[ \t]*[^\r\n]+", raw):
+        value = line.group().lstrip()
+        table_label = _TABLE_LABEL_RE.match(value)
+        if (_NUMBERED_RECORD_RE.match(value)
+                or (table_label and not re.match(
+                    r"(?:同比|环比|上年同期|去年同期|本年|本期|调整前|调整后|重述前|重述后)",
+                    table_label.group(1)))):
+            starts.append(line.start())
+    return starts
+
+
+def _rate_values(segment: str) -> list[re.Match[str]]:
+    """Continue a rate's value list only through explicit local relation words.
+
+    Unknown intervening quantity labels end the old binding, rather than inheriting
+    it until the next catalogued metric. The first value's unit is not whitelisted:
+    a directly written amount such as 毛利率28亿元 must still reach the guardrail.
+    """
+    values = []
+    for match in NUMBER_RE.finditer(segment):
+        if values and not _RATE_VALUE_LINK_RE.fullmatch(segment[values[-1].end():match.start()]):
+            break
+        values.append(match)
+    return values
 
 
 def _local_metric_clause(segment: str) -> str:
@@ -83,16 +126,23 @@ def _extract_native_claims(doc: Document) -> list[Fact]:
                                    basis="reported", text=raw, evidence=[loc],
                                    attributes={"value_start":mapping[match.start()],"value_end":mapping[match.start()+3]+1}))
             metrics = list(METRIC_RE.finditer(compact))
+            record_starts = [bisect_left(mapping, sentence.start() + start)
+                             for start in _record_starts(raw)]
             for i, metric_match in enumerate(metrics):
                 metric = METRICS[metric_match.group()]
                 stop = metrics[i+1].start() if i+1 < len(metrics) else len(compact)
+                next_record = bisect_right(record_starts, metric_match.start())
+                if next_record < len(record_starts):
+                    stop = min(stop, record_starts[next_record])
                 segment = compact[metric_match.end():stop]
                 metric_segment = (_local_metric_clause(segment)
-                                  if metric in {"gross_margin", "net_margin", "debt_ratio", "pe"}
+                                  if metric in _RATE_METRICS
                                   else segment)
+                numbers = (_rate_values(metric_segment) if metric in _RATE_METRICS
+                           else list(NUMBER_RE.finditer(metric_segment)))
                 prefix = compact[:metric_match.start()]
                 # 声明仅取指标之后的数值。其他指标出现即停止，避免串取邻项。
-                for num in NUMBER_RE.finditer(metric_segment):
+                for num in numbers:
                     between = metric_segment[:num.start()]
                     if "同比" in between or "环比" in between:
                         current_metric = metric + ("_yoy" if "同比" in between else "_qoq")
@@ -144,7 +194,7 @@ def _extract_native_claims(doc: Document) -> list[Fact]:
                         attrs["metric_context"] = metric_match.group() + metric_segment
                     if "预测" in context or "预计" in context or "目标" in context:
                         warnings.append("forecast_not_historical_fact")
-                    if metric=="gross_margin" and len(list(NUMBER_RE.finditer(metric_segment)))>1:
+                    if metric=="gross_margin" and len(numbers)>1:
                         warnings.append("rate_transition_requires_explicit_periods")
                     claims.append(Fact(current_metric, value, unit, period, doc.company,
                                        basis=basis, scope=scope, currency=currency, text=raw, evidence=[loc],

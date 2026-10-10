@@ -235,12 +235,15 @@ class DeterministicTests(unittest.TestCase):
         self.assertTrue(all(e["status"] == "confirmed_error" for e in missing))
         self.assertTrue(all(e["detector_id"] == "verified.empty_placeholder" for e in missing))
 
-    def test_suspended_punctuation_is_confirmed_factor_missing(self):
+    def test_suspended_punctuation_only_establishes_a_surface_gap(self):
         text = "东北亚LNG到岸价格为10.81美元/百万英热，。"
         missing = [e for e in detect_text(text, document_id="sp")["errors"]
                    if e["error_type"] == "金融要素缺失"]
         self.assertEqual(len(missing), 1)
-        self.assertEqual(missing[0]["status"], "confirmed_error")
+        self.assertEqual(missing[0]["status"], "needs_review")
+        self.assertEqual(missing[0]["source_original_verdict"]["status"], "confirmed_error")
+        self.assertEqual(missing[0]["validation"], "surface_gap_requires_review")
+        self.assertNotIn("verification_spans", missing[0])
         self.assertEqual(missing[0]["detector_id"], "verified.suspended_punctuation")
 
     def test_percent_gap_is_confirmed_numeric_missing(self):
@@ -431,7 +434,8 @@ class CandidateValidationTests(unittest.TestCase):
 
     def test_model_error_can_be_confirmed_only_with_computed_proof(self):
         text = "2025年2月30日"
-        result = detect_text(text, document_id="proof", chat=MockChat(lambda payload, purpose: [error_at(text, text, "时间信息非法")]))
+        raw = {**error_at(text, text, "时间信息非法"), "reason": "2025年2月30日不存在。"}
+        result = detect_text(text, document_id="proof", chat=MockChat(lambda payload, purpose: [raw]))
         self.assertEqual(len(result["errors"]), 1)
         self.assertEqual(result["errors"][0]["status"], "confirmed_error")
         self.assertIn("deterministic", str(result["errors"][0]["evidence"]))
@@ -453,7 +457,7 @@ class CandidateValidationTests(unittest.TestCase):
     def test_exact_token_model_candidate_merges_with_rule_original_sentence(self):
         source = "结算日为2025年2月30日，请核查。"
         token = "2025年2月30日"
-        raw = error_at(token, source, "时间信息非法")
+        raw = {**error_at(token, source, "时间信息非法"), "reason": "2025年2月30日不存在。"}
         result = detect_text(source, document_id="token-confirmation", chat=MockChat(lambda payload, purpose: [raw]))
         self.assertEqual(len(result["errors"]), 1)
         finding = result["errors"][0]
@@ -685,7 +689,9 @@ class GoldIsolationTests(unittest.TestCase):
 class ContainmentAndTriageTests(unittest.TestCase):
     def test_contained_single_span_candidate_inherits_deterministic_confirmation(self):
         source = "公司于2023年2月30日发布年报。"
-        chat = MockChat(lambda payload, purpose: [error_at("公司于2023年2月30日发布年报", source, "时间信息非法")])
+        raw = {**error_at("公司于2023年2月30日发布年报", source, "时间信息非法"),
+               "reason": "2023年2月30日不存在。"}
+        chat = MockChat(lambda payload, purpose: [raw])
         result = detect_text(source, document_id="contained", chat=chat)
         findings = [e for e in result["errors"] if e["error_type"] == "时间信息非法"]
         self.assertEqual(len(findings), 1, result["errors"])

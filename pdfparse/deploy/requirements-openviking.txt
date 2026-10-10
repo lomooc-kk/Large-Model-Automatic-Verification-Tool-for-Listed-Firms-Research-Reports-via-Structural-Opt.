@@ -1,0 +1,3 @@
+# Optional server environment only; B's HTTP adapter has no new dependencies.
+# Install in an isolated environment, not in the parser's core environment.
+openviking==0.4.23

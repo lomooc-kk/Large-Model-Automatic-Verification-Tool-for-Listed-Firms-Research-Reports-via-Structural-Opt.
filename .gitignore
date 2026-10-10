@@ -10,6 +10,13 @@ Are Large Language Models Reliable Reviewers A Benchmark for Error Detection in 
 
 # 运行环境
 .venv/
+.venv-openviking/
+node_modules/
+/agent_runtime/dist/
+/output/
+/tmp/
+.env
+.env.local
 __pycache__/
 *.pyc
 

@@ -231,6 +231,51 @@ class BudgetTests(unittest.TestCase):
         self.assertNotIn("secret-not-logged", stored)
         self.assertEqual(json.loads(stored)["error_code"], "model_output_truncated")
 
+    def test_truncated_reasoning_only_response_keeps_counts_without_reasoning_text(self):
+        reasoning = "internal analysis secret-not-logged"
+        body = {"choices": [{"message": {"content": "", "reasoning_content": reasoning}, "finish_reason": "length"}],
+                "usage": {"prompt_tokens": 10, "completion_tokens": 5,
+                          "completion_tokens_details": {"reasoning_tokens": 5}}}
+        client = self.client(lambda *a, **k: io.BytesIO(json.dumps(body).encode()))
+        with self.assertRaises(ModelCallError) as error:
+            client([{"role": "user", "content": "test"}])
+        trace = error.exception.trace
+        self.assertEqual(trace["error_code"], "model_output_truncated")
+        self.assertEqual(trace["response_content_chars"], 0)
+        self.assertEqual(trace["reasoning_content_chars"], len(reasoning))
+        self.assertEqual(trace["reasoning_tokens"], 5)
+        self.assertNotIn(reasoning, json.dumps(trace))
+        self.assertNotIn("reasoning_content", trace)
+        with client.ledger.connect() as db:
+            stored = db.execute("SELECT trace FROM calls").fetchone()[0]
+        self.assertNotIn(reasoning, stored)
+        self.assertEqual(json.loads(stored)["reasoning_tokens"], 5)
+
+    def test_output_diagnostics_distinguish_absent_reasoning_from_explicit_empty(self):
+        for value, expected in ((None, None), ("", 0), ([], None)):
+            with self.subTest(value=value):
+                message = {"content": '{"errors": []}'}
+                if value is not None:
+                    message["reasoning_content"] = value
+                body = {"choices": [{"message": message, "finish_reason": "stop"}],
+                        "usage": {"prompt_tokens": 10, "completion_tokens": 5}}
+                client = self.client(lambda *a, **k: io.BytesIO(json.dumps(body).encode()))
+                trace = client([{"role": "user", "content": "test"}])["trace"]
+                self.assertEqual(trace["response_content_chars"], len(message["content"]))
+                self.assertIs(trace["reasoning_content_chars"], expected)
+                self.assertNotIn("reasoning_tokens", trace)
+
+    def test_invalid_reasoning_token_details_do_not_invent_counts_or_change_cost(self):
+        for value in (True, -1, 6, "4", None):
+            with self.subTest(value=value):
+                body = {"choices": [{"message": {"content": '{"errors": []}'}, "finish_reason": "stop"}],
+                        "usage": {"prompt_tokens": 10, "completion_tokens": 5,
+                                  "completion_tokens_details": {"reasoning_tokens": value}}}
+                client = self.client(lambda *a, **k: io.BytesIO(json.dumps(body).encode()))
+                trace = client([{"role": "user", "content": "test"}])["trace"]
+                self.assertNotIn("reasoning_tokens", trace)
+                self.assertEqual(trace["cost_cny"], "0.0002")
+
     def test_error_diagnostics_never_copy_provider_exception_messages(self):
         def fail(*args, **kwargs):
             raise ValueError("model_output_truncated PRIVATE_PROVIDER_BODY")
