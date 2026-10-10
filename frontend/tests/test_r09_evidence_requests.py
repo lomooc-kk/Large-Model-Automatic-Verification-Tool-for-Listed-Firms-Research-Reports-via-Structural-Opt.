@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "frontend"))
@@ -104,9 +105,12 @@ class R09ExportTests(unittest.TestCase):
         self.assertIn("原因==危险公式", rows[1][13])
         md = report_md(result, {})
         self.assertIn("\\|", md)
-        pdf = report_pdf_bytes(result, {})
-        if pdf is None:
+        try:
+            import fitz  # noqa: F401 -- skip only when the dependency is absent.
+        except ImportError:
             self.skipTest("PyMuPDF is unavailable")
+        pdf = report_pdf_bytes(result, {})
+        self.assertIsNotNone(pdf, "Installed PyMuPDF must produce a PDF, not silently fail")
         self.assertTrue(pdf.startswith(b"%PDF"))
         from pypdf import PdfReader
         document = PdfReader(io.BytesIO(pdf))
@@ -114,6 +118,15 @@ class R09ExportTests(unittest.TestCase):
         self.assertGreater(len(document.pages), 1)
         self.assertIn("不存在/来源|文件.pdf", extracted.replace("\n", ""))
         self.assertGreater(extracted.count("补充核对内容"), 100)
+
+    def test_pdf_render_failure_is_not_reported_as_missing_dependency(self):
+        try:
+            import fitz
+        except ImportError:
+            self.skipTest("PyMuPDF is unavailable")
+        with patch.object(fitz.Page, "insert_textbox", return_value=-1):
+            with self.assertRaisesRegex(ValueError, "PDF line did not fit"):
+                report_pdf_bytes(fixture("03_needs_review.json"), {})
 
     def test_text_review_contract_is_not_misclassified(self):
         contract = evidence_request_contract({"schema_version": "text-review/1.0", "findings": []})

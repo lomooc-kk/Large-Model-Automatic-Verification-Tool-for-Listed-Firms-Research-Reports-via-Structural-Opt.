@@ -120,7 +120,7 @@ def _merge_model_claims(claims, candidates, report):
     return aligned
 
 
-def check_documents(report, sources, model_config=None) -> dict:
+def check_documents(report, sources, model_config=None, *, runtime_settings=None) -> dict:
     started = time.monotonic()
     claims = extract_claims(report)
     # 研报中的指标表与财报使用同一套行列/表头抽取，表格断言也进入核查。
@@ -138,7 +138,7 @@ def check_documents(report, sources, model_config=None) -> dict:
     model_candidates_aligned = 0
     if model_config is not None:
         from .model import extract_with_model
-        extra, model_traces = extract_with_model(report, model_config)
+        extra, model_traces = extract_with_model(report, model_config, runtime_settings=runtime_settings)
         model_candidates_aligned = _merge_model_claims(claims, extra, report)
     blocked = [i for d in [report,*sources] for i in d.issues if i.startswith("document:")]
     modeled_at = time.monotonic()
@@ -193,7 +193,7 @@ def check_documents(report, sources, model_config=None) -> dict:
     text_client = None
     if model_config is not None and getattr(model_config, "review_text", False):
         from .model_runtime import BudgetedChatClient
-        text_client = BudgetedChatClient(model_config)
+        text_client = BudgetedChatClient(model_config, runtime_settings)
     text_result = detect_text(report.text, document_id=report.doc_id, scene="研报", detector="hybrid", chat=text_client,
                               max_input_tokens=text_client.settings.context_tokens-text_client.settings.max_output_tokens if text_client else 16000)
     offset = 0

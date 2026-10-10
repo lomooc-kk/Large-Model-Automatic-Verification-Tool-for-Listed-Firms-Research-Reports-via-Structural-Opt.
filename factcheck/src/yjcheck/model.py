@@ -50,7 +50,7 @@ class ModelConfig:
                    reasoning_effort=settings.get("YJCHECK_REASONING_EFFORT", ""))
 
 
-def extract_with_model(doc: Document, config: ModelConfig) -> tuple[list[Fact], list[dict]]:
+def extract_with_model(doc: Document, config: ModelConfig, *, runtime_settings=None) -> tuple[list[Fact], list[dict]]:
     if not config.base_url or not config.model:
         raise ValueError("开启模型需配置 YJCHECK_BASE_URL 和 YJCHECK_MODEL")
     parsed = urlparse(config.base_url)
@@ -58,7 +58,7 @@ def extract_with_model(doc: Document, config: ModelConfig) -> tuple[list[Fact], 
         raise ValueError("模型地址必须为不含凭据的 HTTP(S) URL")
     if parsed.scheme == "http" and parsed.hostname not in {"localhost", "127.0.0.1", "::1"}:
         raise ValueError("远程模型端点必须使用 HTTPS")
-    client = BudgetedChatClient(config, opener=urllib.request.urlopen)
+    client = BudgetedChatClient(config, runtime_settings, opener=urllib.request.urlopen)
     facts, traces = [], []
     blocks = [b for b in doc.blocks if b.status == "ok" and b.type != "table"]
     for start in range(0, len(blocks), 20):

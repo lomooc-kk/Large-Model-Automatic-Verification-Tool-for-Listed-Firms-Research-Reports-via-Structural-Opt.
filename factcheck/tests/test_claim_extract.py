@@ -22,6 +22,7 @@ from reportlab.pdfgen import canvas
 
 from yjcheck.adapters import bind_company, load_document
 from yjcheck.claim_extract import extract_claims
+from yjcheck.intrinsic import check_unit_term_mismatch
 from yjcheck.models import Block, Document, Evidence, Fact
 from yjcheck.pipeline import run_check, verify_artifacts
 
@@ -131,6 +132,76 @@ class ClaimTextRegressionTests(unittest.TestCase, LocatorAssertions):
         claims = extract_claims(make_document("公司毛利率为28亿元。"))
         self.assertEqual([(fact.metric, fact.value, fact.unit) for fact in claims],
                          [("gross_margin", "28", "亿元")])
+
+    def test_numbered_records_keep_rate_values_without_borrowing_other_titles(self):
+        text = ("图表8：甲乙产品毛利率分别为28%、31% ........ 6\n"
+                "图表9：铜产品售价为6.8万元/吨 ........ 7\n"
+                "图表10：铜产品单位成本为2.1万元/吨 ........ 8")
+        claims = extract_claims(make_document(text))
+        self.assertEqual([(f.metric, f.value, f.unit) for f in claims],
+                         [("gross_margin", "28", "%"), ("gross_margin", "31", "%")])
+        self.assertEqual(check_unit_term_mismatch(claims), [])
+        for fact in claims:
+            self.assertEqual(text[fact.attributes["value_start"]:fact.attributes["value_end"]],
+                             fact.value + fact.unit)
+
+    def test_numbered_record_with_real_bad_unit_is_not_exempted(self):
+        text = "图1：产品售价为6万元/吨\n图2：产品毛利率为28亿元 .... 9\n图3：产销量为300吨"
+        claims = extract_claims(make_document(text))
+        self.assertEqual([(f.metric, f.value, f.unit) for f in claims],
+                         [("gross_margin", "28", "亿元")])
+        self.assertEqual(len(check_unit_term_mismatch(claims)), 1)
+
+    def test_rate_binding_stops_at_new_quantity_even_without_catalogued_metric(self):
+        for text in ("毛利率为28%产品单价为6.8万元/吨。",
+                     "毛利率为28%\n产品单价为6.8万元/吨。",
+                     "PE为18倍项目投资为9亿元。"):
+            with self.subTest(text=text):
+                claims = extract_claims(make_document(text))
+                self.assertEqual(len(claims), 1)
+                self.assertNotIn(claims[0].unit, {"万元", "亿元"})
+                self.assertEqual(check_unit_term_mismatch(claims), [])
+
+    def test_same_sentence_multiple_metrics_and_rate_transitions_survive(self):
+        text = "毛利率由20%提升至25%，同比增加5个百分点，营业收入为100万元，净利润为10万元。"
+        claims = extract_claims(make_document(text))
+        self.assertEqual([(f.metric, f.value, f.unit) for f in claims], [
+            ("gross_margin", "20", "%"), ("gross_margin", "25", "%"),
+            ("gross_margin_yoy", "5", "个百分点"),
+            ("revenue", "100", "万元"), ("net_profit", "10", "万元")])
+
+    def test_wrapped_rate_clause_and_original_value_offsets_survive(self):
+        for text, expected in (("2024年毛利率分别为\n28%、\n31%。", [("28", "%"), ("31", "%")]),
+                               ("公司毛利率为\n28亿元。", [("28", "亿元")]),
+                               ("公司毛利率\n由20%提升至\n25%。", [("20", "%"), ("25", "%")])):
+            with self.subTest(text=text):
+                document = make_document(text)
+                claims = extract_claims(document)
+                self.assertEqual([(f.value, f.unit) for f in claims], expected)
+                self.assert_original_quotes(claims, {b.block_id: b for b in document.blocks})
+
+    def test_local_transition_qualifiers_do_not_create_a_new_quantity(self):
+        for qualifier in ("大幅", "小幅", "显著", "持续", "进一步"):
+            with self.subTest(qualifier=qualifier):
+                claims = extract_claims(make_document(f"毛利率由20%{qualifier}提升至\n25%。"))
+                self.assertEqual([(f.value, f.unit) for f in claims], [("20", "%"), ("25", "%")])
+
+    def test_plain_table_rows_are_bound_locally_but_real_wrong_unit_is_retained(self):
+        for bars in (False, True):
+            with self.subTest(markdown=bars):
+                text = "毛利率 | 28% | 31%\n单位成本 | 6.8万元/吨 | 2.1万元/吨\nPE | 18亿元 | 19倍"
+                if bars:
+                    text = "\n".join("| " + line + " |" for line in text.splitlines())
+                claims = extract_claims(make_document(text))
+                self.assertEqual([(f.metric, f.value, f.unit) for f in claims], [
+                    ("gross_margin", "28", "%"), ("gross_margin", "31", "%"),
+                    ("pe", "18", "亿元"), ("pe", "19", "倍")])
+                self.assertEqual(len(check_unit_term_mismatch(claims)), 1)
+
+    def test_structured_table_stays_on_existing_table_extraction_path(self):
+        document = make_document("毛利率 | 28亿元\n单位成本 | 6.8万元/吨")
+        document.blocks[0].type = "table"
+        self.assertEqual(extract_claims(document), [])
 
     def test_evidence_file_hash_participates_in_fact_identity(self):
         first = Fact("revenue", "100", "万元", "2024FY", "测试股份", basis="reported",

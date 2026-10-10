@@ -64,6 +64,13 @@ def settings_panel() -> dict:
         use_model = st.checkbox("大模型辅助抽取", key="use_model",
                                 help="按 YJCHECK_BASE_URL / YJCHECK_MODEL / YJCHECK_API_KEY 环境变量配置的兼容端点；"
                                      "模型只提交候选，判定仍走确定性规则")
+        use_pi = st.checkbox("Pi 自动补证", key="use_pi",
+                             help="由 Pi 安排检测、检索原文和再次核查；模型调用计入共享账本。")
+        kb_dir, allow_fallback = "", False
+        if use_pi:
+            kb_dir = st.text_input("证据库目录", key="agent_kb_dir", help="B 模块 export-kb 生成的目录；资料需已导入 OpenViking。")
+            allow_fallback = st.checkbox("检索服务不可用时使用本地检索", key="agent_allow_fallback",
+                                         help="降级会显示在结果中；原文和来源哈希仍须核对。")
         st.divider()
         if st.button("没有文件？生成演示样例并预填", key="demo_pdfs"):
             sys.path.insert(0, str(BASE / "tools"))
@@ -72,7 +79,8 @@ def settings_panel() -> dict:
             st.session_state["demo_paths"] = {str(k): str(v) for k, v in make_all().items()}
             st.toast("已生成演示研报与财报，可直接点「开始核查」。")
     return {"report": report_upload, "sources": source_uploads,
-            "company": (company or "").strip(), "engine": engine, "use_model": use_model}
+            "company": (company or "").strip(), "engine": engine, "use_model": use_model,
+            "use_pi": use_pi, "kb_dir": kb_dir.strip(), "allow_fallback": allow_fallback}
 
 
 def save_upload(upload) -> Path:
@@ -84,7 +92,18 @@ def save_upload(upload) -> Path:
 
 
 def execute_check(report_path: Path, source_paths: list[Path], company: str,
-                  engine: str, use_model: bool):
+                  engine: str, use_model: bool, use_pi: bool = False,
+                  kb_dir: str = "", allow_fallback: bool = False):
+    if use_pi:
+        from yjcheck.agent_workflow import run_agent_check
+        config = ModelConfig.from_env()
+        config.review_text = use_model
+        with st.spinner("Pi 正在安排核查与补证…"):
+            result, out_dir = run_agent_check(str(report_path), [str(p) for p in source_paths],
+                                              str(CHECK_OUT), company=company or None, engine=engine,
+                                              model_config=config, kb_dir=kb_dir or None,
+                                              allow_fallback=allow_fallback, detect_with_model=use_model)
+        return result, out_dir, True
     model_config = None
     if use_model:
         config = ModelConfig.from_env()
@@ -150,6 +169,12 @@ def overview_view(result: dict, check_dir: Path) -> None:
             st.dataframe([{"原因": key, "数量": value} for key, value in reasons.items()], hide_index=True)
     if result.get("runtime"):
         st.caption(f"完整处理耗时：{result['runtime'].get('total_seconds', '—')} 秒")
+    if result.get("agent_runtime"):
+        agent = result["agent_runtime"]
+        st.caption(f"Pi 执行状态：{agent.get('status')}；调度模型调用 {agent.get('model_calls', 0)} 次；"
+                   f"业务工具调用 {agent.get('tool_calls', 0)} 次。")
+        with st.expander("查看补证过程"):
+            st.json(agent.get("workflow_events", []))
     complete = summary.get("complete")
     meaning = "通过" if complete else "未通过"
     st.caption(
@@ -561,20 +586,26 @@ def main() -> None:
         source_paths = [Path(demo_paths["source"])]
 
     start = st.button("开始核查", type="primary",
-                      disabled=not (report_path and source_paths))
+                      disabled=not (report_path and (source_paths or (options["use_pi"] and options["kb_dir"]))))
     if start:
         try:
             result, out_dir, model_used = execute_check(
-                report_path, source_paths, options["company"], options["engine"], options["use_model"])
-        except (ValueError, OSError, ImportError) as exc:
+                report_path, source_paths, options["company"], options["engine"], options["use_model"],
+                options["use_pi"], options["kb_dir"], options["allow_fallback"])
+        except (ValueError, OSError, ImportError, RuntimeError) as exc:
             st.error(f"核查未完成：{exc}")
             return
         st.session_state["check_result"] = result
         st.session_state["check_dir"] = str(out_dir)
         st.session_state["selected_finding"] = ""
         st.session_state.pop("findings_table", None)
-        st.success(f"核查完成，产物目录：{Path(out_dir).resolve()}"
-                   + ("；本次启用了大模型候选抽取（判定仍走确定性规则）。" if model_used else "（离线规则，未调用模型）。"))
+        agent = result.get("agent_runtime")
+        if agent and agent.get("status") in {"failed", "stopped"}:
+            st.warning("Pi 流程未完整结束，已保存已完成的核查结果。原因：" + str(agent.get("stop_reason")))
+        else:
+            st.success(f"核查完成，产物目录：{Path(out_dir).resolve()}"
+                       + ("；Pi 补证过程已留痕。" if agent else
+                          "；本次启用了大模型候选抽取（判定仍走确定性规则）。" if model_used else "（离线规则，未调用模型）。"))
 
     result = st.session_state.get("check_result")
     check_dir = st.session_state.get("check_dir")

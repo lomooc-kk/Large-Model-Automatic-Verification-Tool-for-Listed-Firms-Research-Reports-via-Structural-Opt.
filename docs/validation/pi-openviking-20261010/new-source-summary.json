@@ -1,0 +1,224 @@
+{
+  "schema_version": "new-pilot-current-status/1.2",
+  "date": "2026-10-10",
+  "registered_sources": 24,
+  "different_sources_first_attempted": 7,
+  "not_yet_inferred_sources": 17,
+  "first_attempts": [
+    {
+      "source_id": "P10",
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "receipt_sha256": "e0f079c8abfb4965deec1320902a8e20959c3198f5ab740c2265d4a1c1324f45"
+    },
+    {
+      "source_id": "P11",
+      "execution_complete": true,
+      "candidate_quality_complete": true,
+      "receipt_sha256": "c34c38dc9ec952281849693775852a58e0abfb4cd41db2cdec9150619bf4ebd3"
+    },
+    {
+      "source_id": "P12",
+      "execution_complete": true,
+      "candidate_quality_complete": true,
+      "receipt_sha256": "9a6c3f7e2fc664f259ce6f287f29a60a59f1ef6eeb6929f9d10ae006b09004a6"
+    },
+    {
+      "source_id": "P09",
+      "execution_complete": true,
+      "candidate_quality_complete": true,
+      "receipt_sha256": "de2bba471295b0b0ced2b76dc196a7070a912435b8054299a5c872702681e4ef"
+    },
+    {
+      "source_id": "P13",
+      "execution_complete": true,
+      "candidate_quality_complete": true,
+      "receipt_sha256": "96518c05884973572099bd823c4b4cf18ab9f2dffa3d7dffdfb3f05294a75c32"
+    },
+    {
+      "source_id": "P14",
+      "execution_complete": true,
+      "candidate_quality_complete": true,
+      "receipt_sha256": "c65bc6cdd2b6cbe9f404ac877b19ee339a73926be32dd08730094e1bda800696"
+    },
+    {
+      "source_id": "P15",
+      "execution_complete": true,
+      "candidate_quality_complete": false,
+      "receipt_sha256": "7070795bed0bef82ae7abe1a53cf26092f60c58bdd1fff95751a5dd1e1753a3d",
+      "code_plan_fingerprint": "9c7ccaf05f9dfbb9c86447ba6f62226651c51c03e9479e462210a22040aaada0"
+    }
+  ],
+  "source_reviewed_pages_for_first_attempted_sources": 50,
+  "first_attempt_execution_complete": 6,
+  "development_comparison_calls": 14,
+  "total_calls_since_new_pilot_started": 21,
+  "total_cost_since_new_pilot_started_cny": "4.004662",
+  "this_round_calls": 1,
+  "this_round_cost_cny": "0.133422",
+  "shared_budget_after": {
+    "limit_cny": "100",
+    "accounted_cny": "42.688694",
+    "calls": 1193
+  },
+  "p13": {
+    "reference_sha256": "071d861db9a830896a366ed7c4461fc2cd0b46a373e7435c7426d8d333836d5e",
+    "plan_fingerprint": "f4f5de1a5407fd5f8ec8b686d2e14ed86ae63e74318197cf2fee2368e4c111dd",
+    "input_chars": 8025,
+    "pages": 5,
+    "raw": 2,
+    "final": 2,
+    "rejected": 0,
+    "cost_cny": "0.132034",
+    "preinference_pending_count": 8,
+    "full_document_score_eligible": false
+  },
+  "p14": {
+    "pages": 23,
+    "input_chars": 29385,
+    "request_count": 1,
+    "fingerprint": "9d9720937415cb10fec15942a992dc1e19de160130d72cd5019909641f450b1f",
+    "raw_model_candidates": 6,
+    "final_candidates": 7,
+    "rejected_candidates": 0,
+    "cost_cny": "0.284284",
+    "known_provisional_errors": 3,
+    "known_provisional_errors_detected": 0,
+    "known_provisional_errors_missed": 3,
+    "preinference_pending_count": 12,
+    "human_adjudicated": false,
+    "full_document_score_eligible": false,
+    "overall_recall": null
+  },
+  "full_competition_f1": null,
+  "old_95_goal_achieved": false,
+  "adopted_changes": [
+    "optional precisely anchored source-quality metadata interface",
+    "content/reasoning length diagnostics without storing reasoning text",
+    "explicit chart/table record boundaries for ratio metric unit extraction",
+    "source-matched EPS unit review candidate with exact year/status/value alignment",
+    "auditable numeric quote boundary warnings without changing original candidates"
+  ],
+  "optional_development_interfaces": [
+    "candidate-decisions/1.0, strict parser and auditable verdict routing"
+  ],
+  "not_adopted_as_default": [
+    "disabled thinking",
+    "source-quality hints as an automatic whole-workflow feature",
+    "explicit decision contract; business gain not demonstrated"
+  ],
+  "model_weight_training_performed": false,
+  "pi_openviking_invoked_in_chinese_pilot": false,
+  "linked_summaries": [
+    {
+      "path": "first-pilot-20261010/first-pilot-summary.json",
+      "sha256": "8baa568d6bd7d21569a396a70c11178a93702041fe16b415de0ca735a62d3bec"
+    },
+    {
+      "path": "followup-20261010/round-summary.json",
+      "sha256": "e67c4d58f315a94a2f362fb5ae033b52b38ee3a991bdd996dfbab20bcd3c78dd"
+    },
+    {
+      "path": "decision-contract-20261010/round-summary.json",
+      "sha256": "0d2a9af44286551e5a8370ead770016f9bbd89fcd1f0759497a26b7decb703fd"
+    },
+    {
+      "path": "mechanism-fixes-20261010/summary.json",
+      "sha256": "f1ed1c578d88e5ea19b898f3e5ca5111d33752ec9f03a1ef250173171a2ccbb5"
+    }
+  ],
+  "p13_independent_audits": [
+    {
+      "path": "second-pilot-20261010/cross-review/p13-outcome.json",
+      "sha256": "ce0eac72594bf9f0739b5831e895c4e9989cac1942ee508cb118db34677c75ab"
+    },
+    {
+      "path": "second-pilot-20261010/run-support/baseline-v1/audit/runtime-audit.json",
+      "sha256": "52d5a11c4b80458a9bcddfdb4e8a481abe86214196722ca8444ad1c29d8d2694"
+    }
+  ],
+  "p14_independent_audits": [
+    {
+      "path": "second-pilot-20261010/cross-review/p14-outcome.json",
+      "sha256": "efb9fddf4eda87bb0667d41acd1a2cbb662a5c7e4a7b3130d052abf30b4d5f3e"
+    },
+    {
+      "path": "second-pilot-20261010/run-support/p14-baseline-v1/audit/runtime-audit.json",
+      "sha256": "d51235e32f664564a142a54b56a4c4ad91f6fcfc0050fdf6e20b94e7bbbaf397"
+    }
+  ],
+  "prior_status": {
+    "path": "mechanism-fixes-20261010/status-before-this-round.json",
+    "sha256": "98972b8759edea3b3fb80dc7a71de7e98c689e084b81125dc3f04e362ad6bc5d"
+  },
+  "software_validation": {
+    "path": "mechanism-fixes-20261010/software-validation.json",
+    "sha256": "b962ca79519b0c6a950e1c955811181d857dd0e64a88d715e48ece05f4310753"
+  },
+  "interpretation": "Seven different sources, twenty-one paid calls including fourteen development comparisons. P15 is the first new source after current deterministic mechanism fixes; prior six first attempts are historical versions. Seven cache replays are neither paid calls nor independent samples. Partial AI references are not complete business gold. No overall competition F1, model weight training, or Pi/OpenViking lift claim.",
+  "registered_prospective_sources": 20,
+  "registered_development_exposed_sources": 4,
+  "development_exposed_source_ids": [
+    "P03",
+    "P07",
+    "P08",
+    "P16"
+  ],
+  "not_yet_inferred_prospective_sources": 13,
+  "first_attempt_execution_and_candidate_quality_complete": 5,
+  "p15": {
+    "pages": 4,
+    "input_chars": 6838,
+    "fingerprint": "9c7ccaf05f9dfbb9c86447ba6f62226651c51c03e9479e462210a22040aaada0",
+    "request_count": 1,
+    "cost_cny": "0.133422",
+    "execution_complete": true,
+    "candidate_quality_complete": false,
+    "raw_model_candidates": 3,
+    "final_candidates": 2,
+    "rejected_candidates": 1,
+    "confirmed_candidates": 0,
+    "quote_boundary_observations": 0,
+    "preinference_provisional_errors": 0,
+    "preinference_pending_count": 8,
+    "preinference_local_normal_contexts": 15,
+    "human_adjudicated": false,
+    "full_document_score_eligible": false,
+    "overall_precision_recall_F1": null,
+    "source_group": "template-caution-03",
+    "not_certified_final_blind_holdout": true
+  },
+  "mechanism_replay": {
+    "path": "mechanism-fixes-20261010/summary.json",
+    "sha256": "f1ed1c578d88e5ea19b898f3e5ca5111d33752ec9f03a1ef250173171a2ccbb5",
+    "new_model_calls": 0,
+    "new_independent_sources": 0,
+    "same_request_cache_lookups": 7,
+    "all_original_first_six_preserved": true,
+    "failed_P10_preserved": true,
+    "final_candidates_first_six_before": 21,
+    "final_candidates_first_six_after": 22,
+    "added_EPS_review_candidates": 2,
+    "removed_cross_chart_unit_candidate": 1,
+    "separate_P13_B_boundary_observations": 2
+  },
+  "p15_independent_audits": [
+    {
+      "path": "second-pilot-20261010/cross-review/p15-outcome.json",
+      "sha256": "f296de10dc844e4c83416d2791eecba888f61c267f733bc76969e1d9c333a3ba"
+    },
+    {
+      "path": "second-pilot-20261010/run-support/p15-baseline-v1/audit/runtime-audit.json",
+      "sha256": "945db948178bbb4321d284e551e430765b5625bcd0c617a2f9849feef316c879"
+    }
+  ],
+  "publication": {
+    "source_snapshot_sha256": "93fe5fdedbadf9470893f54e391e6b46fe32c057a3a52dcc6f19aa190b77f8a9",
+    "absolute_ledger_path_removed": true,
+    "raw_experiments_included": false,
+    "source_paths_are_local_evidence_references": true,
+    "not_full_business_gold_or_independent_blind_test": true,
+    "P18": "source preparation complete; cross-review incomplete; no model attempt",
+    "P16": "source preparation complete; development exposed; no model attempt"
+  }
+}

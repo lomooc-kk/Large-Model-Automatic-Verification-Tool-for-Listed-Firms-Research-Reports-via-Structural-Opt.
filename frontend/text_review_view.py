@@ -40,6 +40,9 @@ def show_text_report(report, check_dir=None):
     hints = all_review_hints(report)["errors"]
     rejected_hints = [e for e in hints if e.get("invalid_anchor")]
     coverage = report.get("coverage", {})
+    agent = report.get("agent_runtime", {})
+    if agent.get("status") in {"failed", "stopped"} or coverage.get("agent_complete") is False:
+        st.warning("Pi 补证流程未完整结束；以下是已完成的部分结果。原因：" + str(agent.get("stop_reason", "unknown")))
     confirmed = sum(e.get("status") == "confirmed_error" for e in errors)
     store = ReviewStore(check_dir) if check_dir else None
     cols = st.columns(4)
@@ -86,6 +89,21 @@ def show_text_report(report, check_dir=None):
                 identity = "text:" + (hint.get("id") or "rejected:" + hashlib.sha256(
                     json.dumps([index, hint], ensure_ascii=False, sort_keys=True).encode()).hexdigest())
                 _review_controls(store, report["document_id"], identity, "_rejected")
+    redundancy_review = report.get("redundancy_review")
+    if isinstance(redundancy_review, dict):
+        with st.expander("冗余复核：保留、调整与撤回依据"):
+            st.caption("这是模型结合原文提出的复核意见；撤回的原提示及其依据保留在这里，可继续人工复核。")
+            if not redundancy_review.get("complete"):
+                st.warning("冗余复核未完成，已保留该阶段之前的全部提示。")
+            actions = {"retain": "保留", "revise": "调整引用", "withdraw": "撤回提示"}
+            for record in redundancy_review.get("decisions", []):
+                decision = record.get("decision", {})
+                st.write(actions.get(record.get("action"), "待复核") + "：" + str(decision.get("reason", "")))
+                for span in record.get("evidence", []):
+                    st.text(span.get("text", ""))
+                    st.caption(f"原文字符区间 [{span.get('start')}, {span.get('end')})")
+                st.json({"原提示": record.get("before"), "复核后": record.get("after")}, expanded=False)
+                _review_controls(store, report["document_id"], "text:" + record["error_id"], "_redundancy")
     if store is not None:
         with st.expander("人工复核统计（按复核人计时）"):
             st.json(store.timing_report())
@@ -110,16 +128,26 @@ def text_review_page():
     upload = st.file_uploader("上传文本或 Markdown", type=["txt", "md"], key="review_text_file")
     pasted = st.text_area("或粘贴待检查正文", height=240, key="review_text_input")
     content = upload.getvalue().decode("utf-8-sig") if upload else pasted
-    use_model = st.checkbox("启用模型检测", key="text_review_use_model", help="使用已有模型接口，费用计入本轮20元累计预算。")
+    use_model = st.checkbox("启用模型检测", key="text_review_use_model", help="使用已有模型接口，费用计入共享预算账本。")
+    use_pi = st.checkbox("Pi 自动补证", key="text_review_use_pi",
+                         help="由 Pi 调度模型检测及证据检索；外部事实核验另列，不改变文本检测评分口径。")
+    kb_dir = st.text_input("证据库目录", key="text_agent_kb_dir") if use_pi else ""
     if st.button("检查文本", disabled=not content.strip(), type="primary"):
         try:
-            client = BudgetedChatClient(ModelConfig.from_env()) if use_model else None
-            examples_path = Path(__file__).resolve().parents[1] / "data/v2/dataset/examples.dev.json"
-            examples = json.loads(examples_path.read_text(encoding="utf-8")) if examples_path.exists() else []
-            examples = [e for e in examples if e.get("content") != content]
-            report = detect_text(content, document_id="text-" + hashlib.sha256(content.encode()).hexdigest(),
-                                 detector="hybrid", chat=client, examples=examples,
-                                 max_input_tokens=client.settings.context_tokens - client.settings.max_output_tokens if client else 16000)
+            client = BudgetedChatClient(ModelConfig.from_env()) if use_model and not use_pi else None
+            # Historical FinED samples are diagnostic-only. New CLFEC correction
+            # examples have a different contract and must not be silently mapped
+            # into the fifteen-label detector used by this page.
+            examples = []
+            if use_pi:
+                from yjcheck.agent_workflow import run_agent_text
+                report, _ = run_agent_text(content, document_id="text-" + hashlib.sha256(content.encode()).hexdigest(),
+                                           model_config=ModelConfig.from_env(), kb_dir=kb_dir.strip() or None,
+                                           examples=examples)
+            else:
+                report = detect_text(content, document_id="text-" + hashlib.sha256(content.encode()).hexdigest(),
+                                     detector="hybrid", chat=client, examples=examples,
+                                     max_input_tokens=client.settings.context_tokens - client.settings.max_output_tokens if client else 16000)
             st.session_state["text_review_result"] = report
             directory = Path(__file__).resolve().parent / "data/text_review" / uuid.uuid4().hex
             directory.mkdir(parents=True, exist_ok=False)
@@ -128,4 +156,11 @@ def text_review_page():
         except (ValueError, OSError, RuntimeError) as exc:
             st.error(f"文本检测未完成：{exc}")
     if st.session_state.get("text_review_result"):
+        current = st.session_state["text_review_result"]
+        if current.get("agent_runtime"):
+            with st.expander("Pi 补证过程"):
+                st.json(current["agent_runtime"])
+        if current.get("external_fact_check"):
+            with st.expander("外部证据事实核验（独立结果）"):
+                st.json(current["external_fact_check"])
         show_text_report(st.session_state["text_review_result"], st.session_state.get("text_review_dir"))

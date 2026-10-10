@@ -312,9 +312,8 @@ def report_pdf_bytes(result: dict, reviews: dict[str, dict]) -> bytes | None:
             return buffer.getvalue()
         except (ImportError, OSError, StopIteration, ValueError):
             return None
-    try:
-        cjk = fitz.Font("cjk")
-        document = fitz.open()
+    cjk = fitz.Font("cjk")
+    with fitz.open() as document:
 
         def new_pdf_page():
             page = document.new_page(width=595, height=842)
@@ -329,14 +328,13 @@ def report_pdf_bytes(result: dict, reviews: dict[str, dict]) -> bytes | None:
                 page = new_pdf_page()
                 y = 50.0
             text = line or " "
-            result_code = page.insert_textbox(fitz.Rect(50, y, 545, y + 15), text,
+            # PyMuPDF 1.27 CJK textbox metrics need about 15.75 pt at 10 pt.
+            # Use an 18 pt line box and matching leading to avoid clipping.
+            result_code = page.insert_textbox(fitz.Rect(50, y, 545, y + 18), text,
                                 fontsize=10, fontname="cjk0")
             if result_code < 0:
                 raise ValueError("PDF line did not fit")
-            y += 16 if line else 10
+            y += 18 if line else 10
         buffer = io.BytesIO()
         document.save(buffer)
-        document.close()
         return buffer.getvalue()
-    except Exception:
-        return None

@@ -1,3 +1,4 @@
 # Evidence hashes must survive Git checkout on Windows and Unix unchanged.
 artifacts/research442-rerun-20261005/** -text
 artifacts/case-diagnostics-20261005/** -text
+docs/validation/pi-openviking-20261010/** -text

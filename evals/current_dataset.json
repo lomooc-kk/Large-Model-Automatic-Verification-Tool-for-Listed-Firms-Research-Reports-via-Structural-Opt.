@@ -1,0 +1,20 @@
+{
+  "schema_version": "current-dataset/1.0",
+  "active_manifest": "data/active_suite_v1/MANIFEST.json",
+  "active_manifest_sha256": "c4f46885ca489e88ff529d73dbba248ffcdff5b67629a84c36e7be73570721b3",
+  "intended_consumer": "evals/run_active_suite.py",
+  "legacy_role": "diagnostic_only",
+  "legacy_in_active_denominator": false,
+  "default_role": "development",
+  "validation": "iterative",
+  "reserved_role": "final_candidate_reserved",
+  "reserved_default_run_allowed": false,
+  "reserved_policy": "Frozen candidate only; prohibit optimization, training and default runs; prior exposure unknown, not certified unseen.",
+  "default_tracks": [
+    "clfec",
+    "financebench_claim_verification"
+  ],
+  "task_scores_must_remain_separate": true,
+  "model_weight_training_already_performed": false,
+  "note": "New run_active_suite should consume this active-manifest pointer and role policy; this configuration does not launch inference."
+}
