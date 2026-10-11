@@ -188,6 +188,30 @@ def cmd_model_check(args) -> int:
     return 0 if all(item.ok for item in results) else 1
 
 
+def cmd_corpus_catalog(args) -> int:
+    from .corpus import catalog_summary, load_catalog
+
+    catalog = load_catalog(Path(args.catalog))
+    summary = catalog_summary(catalog)
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_import_corpus(args) -> int:
+    from .corpus import import_jsonl
+
+    manifest = import_jsonl(
+        [Path(value) for value in args.input], Path(args.kb), source_id=args.source_id,
+        category=args.category, role=args.role, project=args.project,
+        language=args.language, allow_evaluation=args.allow_evaluation,
+        max_records=args.max_records,
+    )
+    print(f"语料文档 {len(manifest['documents'])} 篇，索引块 {manifest['blocks']} 条，"
+          f"跳过 {len(manifest['skipped'])} 条")
+    print(f"接入清单：{manifest['manifest']}")
+    return 0
+
+
 def cmd_search(args) -> int:
     from .retrieval import Bm25Index, compare_across_documents, load_index
 
@@ -300,6 +324,25 @@ def build_parser() -> argparse.ArgumentParser:
     p_model.add_argument("--vision-model", default=None)
     p_model.add_argument("--timeout", type=float, default=30.0)
     p_model.set_defaults(func=cmd_model_check)
+
+    p_catalog = sub.add_parser("corpus-catalog", help="校验并汇总外部金融语料来源目录")
+    p_catalog.add_argument("--catalog", default="config/financial_corpus_catalog.json")
+    p_catalog.set_defaults(func=cmd_corpus_catalog)
+
+    p_corpus = sub.add_parser("import-corpus", help="把标准 JSONL 外部语料导出为 OpenViking/Pi 知识库")
+    p_corpus.add_argument("--input", action="append", required=True,
+                          help="JSONL 或 JSONL.GZ，可重复；禁止 gold 文件")
+    p_corpus.add_argument("--kb", required=True)
+    p_corpus.add_argument("--source-id", required=True)
+    p_corpus.add_argument("--category", required=True)
+    p_corpus.add_argument("--role", choices=sorted(("production", "evaluation", "development", "quarantine")),
+                          default="production")
+    p_corpus.add_argument("--project", default="financial-evidence")
+    p_corpus.add_argument("--language", default="unknown")
+    p_corpus.add_argument("--allow-evaluation", action="store_true",
+                          help="显式允许导出非生产数据；project 必须使用 eval-* 隔离命名空间")
+    p_corpus.add_argument("--max-records", type=int, default=None)
+    p_corpus.set_defaults(func=cmd_import_corpus)
     return parser
 
 

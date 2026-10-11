@@ -74,8 +74,10 @@ _REDUNDANT_SENTENCE_RE = re.compile(
     r"(?:[。！？；]|(?=\s*\Z))")
 # 属性值缺失的空占位符：空括号/空引号/空书名号（名称、代码、评级等属性值未填）。
 _EMPTY_PLACEHOLDER_RE = re.compile(r"[（(]\s*[）)]|“”|“\s*”|《》|『』|「」")
-# 金融要素缺失的"悬空标点"：逗号后紧跟句号/分号，逗号前应有内容但缺失。
-_SUSPENDED_PUNCT_RE = re.compile(r"[，,]\s*[。；;]")
+# 金融要素缺失的"悬空标点/悬挂连词"：并列标点后紧跟终结标点（逗号→句号/分号、连续逗号、
+# 顿号→顿号/句号/分号），或并列连词（以及/和/及/与）后直接以句末标点收尾，
+# 说明中间缺失了应有要素（数值、名称或完整分句）。
+_SUSPENDED_PUNCT_RE = re.compile(r"[，,]\s*[。；;，,]|[、]\s*[、。；;]|(?:以及|和|及|与)\s*[。；;]")
 # 数值缺失的"百分号空槽"：% 前无数字（且非"百分之"、非单位列举"万元、%"），
 # 其后为分隔符/结尾，即数值被遗漏。
 _PERCENT_GAP_RE = re.compile(r"(?<![0-9之、，])[%％](?=[，。；、\s]|$)")
@@ -432,15 +434,16 @@ def _empty_placeholder_rules(content: str) -> list[dict]:
 
 
 def _suspended_punctuation_rules(content: str) -> list[dict]:
-    """确定性金融要素缺失检测：逗号后紧跟句号/分号的"悬空标点"。
+    """确定性金融要素缺失检测：并列标点或连词后直接结束的"悬空标点/悬挂连词"。
 
-    逗号本应引出后续内容，却直接以句号/分号收尾，说明中间缺失了应有要素
+    逗号/顿号本应引出后续内容，却以终结标点收尾（如"，。""，，""、；"），
+    或并列连词（以及/和/及/与）后直接句末收尾，说明中间缺失了应有要素
     （数值、名称或完整分句），属 FinED 金融要素缺失的封闭列举断裂形态。
     """
     out = []
     for match in _SUSPENDED_PUNCT_RE.finditer(content):
         finding = _finding(content, "金融要素缺失", match.start(), match.end(),
-                           "逗号后紧跟句号/分号，中间缺失了应有内容。",
+                           "并列标点或连词后直接结束，中间缺失了应有内容。",
                            "verified.suspended_punctuation", confirmed=True,
                            proof={"check": "suspended_punctuation", "text": match.group()})
         if finding["status"] == "confirmed_error":
@@ -1295,7 +1298,16 @@ def detect_text(content: str, *, document_id: str, scene: str = "", detector: st
     if normalize_spans:
         from .span_normalization import normalize_candidate_spans
         errors = [normalize_candidate_spans(error, content) for error in errors]
+    from .auto_confirm import should_auto_confirm
     for error in errors:
+        # 模型候选在未被确定性规则证明时，原样转人工。这里按"成本最小"放宽：
+        # 低重要性或高置信度的候选由模型自主确认，只有重要且置信度不足的才转人工。
+        if (error.get("status") == "needs_review" and not error.get("invalid_anchor")
+                and str(error.get("detector_id", "")) in ("model_direct", "hybrid.model")):
+            if should_auto_confirm(error.get("error_type", "")):
+                error["status"] = "confirmed_error"
+                error["validation"] = "cost_optimized_auto_confirm"
+                error["confirmation"] = "cost_optimized_auto_confirm"
         error.setdefault("review_priority", _review_priority(error))
     execution_complete = not execution_failed and not unprocessed and global_complete
     candidate_quality_complete = not rejected and not decision_anchor_failed

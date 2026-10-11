@@ -60,7 +60,8 @@ class TextContractTests(unittest.TestCase):
 
     def test_unique_whitespace_quote_recovers_original_source_for_both_arms(self):
         source = "价格为\u00a0 100 元。"
-        raw = {"error_type": "模糊语言", "spans": [{"text": "价格为 100 元。"}], "reason": "待核查"}
+        # 用高重要性类型（计算错误），避免成本优化把它自动确认，从而只验证锚定恢复。
+        raw = {"error_type": "计算错误", "spans": [{"text": "价格为 100 元。"}], "reason": "待核查"}
         for detector in ("model_direct", "hybrid"):
             result = detect_text(source, document_id="whitespace", detector=detector,
                                  chat=MockChat(lambda payload, purpose: [raw]))
@@ -246,6 +247,29 @@ class DeterministicTests(unittest.TestCase):
         self.assertNotIn("verification_spans", missing[0])
         self.assertEqual(missing[0]["detector_id"], "verified.suspended_punctuation")
 
+    def test_suspended_punctuation_extended_anchors(self):
+        cases = {
+            "comma-comma": "4月单月人身险公司原保费规模达2879亿元，，较3月增速提升5.4pct。",
+            "dun-dun": "民用硝化棉产品质量的主要指标有含氮量、、粘度、安全性指标、色度等。",
+            "dun-semi": "2025年4月国内新增公共充电桩9.20万台，同比+35%、；其中新增直流充电桩4.90万台。",
+            "yiji-period": "小米YU7全系标配英伟达Thor车载计算平台、1个激光雷达、1个4D毫米波雷达、11个高清摄像头以及。",
+            "he-period": "本周重点关注组合：比亚迪、理想汽车、拓普集团、德赛西威和。",
+        }
+        for label, text in cases.items():
+            with self.subTest(anchor=label):
+                missing = [e for e in detect_text(text, document_id="sp-ext-" + label)["errors"]
+                           if e["error_type"] == "金融要素缺失"]
+                self.assertEqual(len(missing), 1)
+                self.assertEqual(missing[0]["status"], "needs_review")
+                self.assertEqual(missing[0]["detector_id"], "verified.suspended_punctuation")
+
+    def test_suspended_punctuation_extended_anchors_do_not_flag_normal_series(self):
+        for text in ("公司产品包括A、B以及C。", "收入与利润保持稳定。", "利润和收入均增长。",
+                     "份额分别增长19.9%/21.7%（前值18%/20%）。"):
+            with self.subTest(text=text):
+                errors = detect_text(text, document_id="sp-ext-ok")["errors"]
+                self.assertFalse(any(e["error_type"] == "金融要素缺失" for e in errors))
+
     def test_percent_gap_is_confirmed_numeric_missing(self):
         text = "销售额同比增长 %，核心一级资本充足率%。"
         missing = [e for e in detect_text(text, document_id="pg")["errors"]
@@ -338,7 +362,8 @@ class CandidateValidationTests(unittest.TestCase):
 
     def test_both_arms_apply_identical_source_only_offset_repair(self):
         text = "前段。这个承诺不够明确。末段。"
-        raw = error_at("这个承诺不够明确", "", start=999)
+        # 用高重要性类型（计算错误），避免成本优化把它自动确认，从而只验证 offset 修复。
+        raw = error_at("这个承诺不够明确", "", start=999, kind="计算错误")
         results = [detect_text(text, document_id="shared-anchor", detector=detector,
                    chat=MockChat(lambda payload, purpose: [raw]))
                    for detector in ("model_direct", "hybrid")]
@@ -396,14 +421,16 @@ class CandidateValidationTests(unittest.TestCase):
 
     def test_direct_valid_source_anchor_does_not_confirm_model_claim(self):
         text = "2025年2月30日"
+        # 高重要性类型（计算错误）在成本优化下仍转人工，用于验证 model_direct 不因锚定而确认。
         result = detect_text(text, document_id="direct-unverified", detector="model_direct",
-                             chat=MockChat(lambda payload, purpose: [error_at(text, text, "时间信息非法")]))
+                             chat=MockChat(lambda payload, purpose: [error_at(text, text, "计算错误")]))
         self.assertEqual(result["errors"][0]["status"], "needs_review")
         self.assertNotIn("deterministic", str(result["errors"][0]["evidence"]))
 
     def test_wrong_offset_unique_exact_text_is_reanchored(self):
         text = "首段。这个承诺不够明确。末段。"
-        raw = error_at("这个承诺不够明确", "", start=999)
+        # 高重要性类型（计算错误）在成本优化下仍转人工，从而只验证 offset 修复。
+        raw = error_at("这个承诺不够明确", "", start=999, kind="计算错误")
         result = detect_text(text, document_id="anchor", chat=MockChat(lambda payload, purpose: [raw]))
         found = result["errors"][0]
         self.assertEqual(found["spans"][0]["start"], text.index("这个承诺"))
@@ -427,7 +454,8 @@ class CandidateValidationTests(unittest.TestCase):
 
     def test_model_status_cannot_confirm_qualitative_claim(self):
         source = "具有一定的增长潜力。"
-        raw = {**error_at(source, source), "status": "confirmed_error", "evidence": [{"proof": "trust me"}]}
+        # 高重要性类型（计算错误）在成本优化下仍转人工，用于验证 raw 的 status/evidence 不被采纳。
+        raw = {**error_at(source, source, "计算错误"), "status": "confirmed_error", "evidence": [{"proof": "trust me"}]}
         result = detect_text(source, document_id="qualitative", chat=MockChat(lambda payload, purpose: [raw]))
         self.assertEqual(result["errors"][0]["status"], "needs_review")
         self.assertNotIn("trust me", str(result["errors"][0]))
@@ -709,13 +737,14 @@ class ContainmentAndTriageTests(unittest.TestCase):
 
     def test_review_priority_tiers_for_deterministic_and_model_candidates(self):
         source = "甲公司、乙公司分别为1%、2%、3%。"
+        # 语义逻辑矛盾为高重要性，成本优化下仍转人工并落入 low 分诊档（非数值可核对）。
         chat = MockChat(lambda payload, purpose: [
-            error_at("分别为", source, "模糊语言"),
+            error_at("分别为", source, "语义逻辑矛盾"),
             error_at("1%", source, "数值不一致错误")])
         result = detect_text(source, document_id="tiers", chat=chat)
         tiers = {(e["detector_id"], e["error_type"]): e.get("review_priority") for e in result["errors"]}
         self.assertEqual(tiers[("legacy.C.INTRINSIC.001", "数值不一致错误")], "high")
-        self.assertEqual(tiers[("hybrid.model", "模糊语言")], "low")
+        self.assertEqual(tiers[("hybrid.model", "语义逻辑矛盾")], "low")
         self.assertEqual(tiers[("hybrid.model", "数值不一致错误")], "high")
 
     def test_token_budget_windows_are_lossless_and_larger_than_byte_windows(self):
@@ -735,6 +764,37 @@ class ContainmentAndTriageTests(unittest.TestCase):
             with self.subTest(source=source):
                 result = detect_text(source, document_id="context-guard", chat=MockChat())
                 self.assertTrue(all(e["status"] == "needs_review" for e in result["errors"]), source)
+
+
+class AutoConfirmCostTests(unittest.TestCase):
+    def test_low_importance_model_candidate_is_auto_confirmed(self):
+        text = "这句话有歧义。"
+        raw = error_at(text, text, "模糊语言")
+        result = detect_text(text, document_id="auto-low", detector="model_direct",
+                             chat=MockChat(lambda payload, purpose: [raw]))
+        self.assertEqual(result["errors"][0]["status"], "confirmed_error")
+        self.assertEqual(result["errors"][0]["validation"], "cost_optimized_auto_confirm")
+        self.assertEqual(result["errors"][0]["confirmation"], "cost_optimized_auto_confirm")
+
+    def test_high_importance_model_candidate_stays_for_review(self):
+        text = "1+1=3。"
+        raw = error_at(text, text, "计算错误")
+        result = detect_text(text, document_id="auto-high", detector="model_direct",
+                             chat=MockChat(lambda payload, purpose: [raw]))
+        self.assertEqual(result["errors"][0]["status"], "needs_review")
+
+    def test_invalid_anchor_is_never_auto_confirmed(self):
+        raw = error_at("不存在的文字", "", kind="模糊语言", start=-9)
+        result = detect_text("实际原文", document_id="auto-invalid", detector="model_direct",
+                             chat=MockChat(lambda payload, purpose: [raw]))
+        self.assertEqual(result["errors"][0]["status"], "needs_review")
+        self.assertTrue(result["errors"][0]["invalid_anchor"])
+
+    def test_decision_threshold_rises_with_importance(self):
+        from yjcheck.auto_confirm import confidence_threshold, should_auto_confirm
+        self.assertLess(confidence_threshold(1), confidence_threshold(5))
+        self.assertTrue(should_auto_confirm("冗余语句"))
+        self.assertFalse(should_auto_confirm("数值不一致错误"))
 
 
 if __name__ == "__main__":

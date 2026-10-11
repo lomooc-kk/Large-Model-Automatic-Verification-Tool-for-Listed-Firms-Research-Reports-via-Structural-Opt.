@@ -423,11 +423,12 @@ def build_source_issues(content, findings):
                 finding["error_type"] = kind
                 finding["reason"] = f"原文明确命名的“{field['field']}”字段后直接结束，字段值为空；不推定应填内容。"
             if family == "missing_unnamed_clause":
-                # A comma followed by a terminator proves only a surface gap;
-                # it cannot decide missing financial content versus stray comma.
+                # Suspended punctuation or trailing conjunction followed by a
+                # terminator proves only a surface gap; it cannot decide missing
+                # financial content versus a stray mark.
                 finding["source_original_verdict"] = {key: finding[key] for key in ("error_type", "status", "validation", "reason")}
                 finding.update(status="needs_review", validation="surface_gap_requires_review",
-                               reason="原文逗号后直接结束，存在表面空槽；需核对是多余标点还是必要分句缺失，不推定缺失字段。")
+                               reason="原文并列标点或连词后直接结束，存在表面空槽；需核对是多余标点还是必要分句缺失，不推定缺失字段。")
                 finding["surface_spans"] = finding.pop("verification_spans")
                 checks.append({"check": "surface_gap_only", "business_field_missing_confirmed": False})
             checks.append({"check": "source_missing_field_boundary", **field})

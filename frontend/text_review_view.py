@@ -4,6 +4,7 @@ import csv
 import hashlib
 import io
 import json
+import re
 import time
 import uuid
 from pathlib import Path
@@ -13,6 +14,20 @@ from yjcheck.model_runtime import BudgetedChatClient
 from yjcheck.text_review import detect_text
 from yjcheck.review_hints import all_review_hints
 from review_store import ReviewStore, REVIEW_STATUSES, REVIEW_LABELS
+
+
+def api_key_format_error(key: str) -> str | None:
+    """校验 API 密钥格式；返回错误提示，None 表示合理。留空回退环境变量，不算错误。"""
+    key = (key or "").strip()
+    if not key:
+        return None
+    if any(ch.isspace() for ch in key):
+        return "密钥不能包含空格或换行，请检查是否多复制了空白"
+    if re.search(r"[\u4e00-\u9fff\uff00-\uffef]", key):
+        return "密钥包含中文或全角字符，请重新复制"
+    if len(key) < 8:
+        return "密钥过短，疑似输入不完整"
+    return None
 
 
 def _review_controls(store, document_id, identity, key_suffix=""):
@@ -132,9 +147,25 @@ def text_review_page():
     use_pi = st.checkbox("Pi 自动补证", key="text_review_use_pi",
                          help="由 Pi 调度模型检测及证据检索；外部事实核验另列，不改变文本检测评分口径。")
     kb_dir = st.text_input("证据库目录", key="text_agent_kb_dir") if use_pi else ""
+    api_key = ""
+    api_key_error = None
+    if use_model:
+        api_key = st.text_input("API 密钥", type="password", key="text_review_api_key_input",
+                                help="DeepSeek 密钥通常以 sk- 开头；留空则使用环境变量 YJCHECK_API_KEY")
+        api_key_error = api_key_format_error(api_key)
+        if api_key_error:
+            st.markdown(
+                f'<p style="color:#e5484d;font-size:0.8rem;line-height:1;margin-top:-12px;">{api_key_error}</p>',
+                unsafe_allow_html=True)
     if st.button("检查文本", disabled=not content.strip(), type="primary"):
         try:
-            client = BudgetedChatClient(ModelConfig.from_env()) if use_model and not use_pi else None
+            client = None
+            config = ModelConfig.from_env()
+            if use_model:
+                if api_key and api_key_error is None:
+                    config.api_key = api_key
+                if not use_pi:
+                    client = BudgetedChatClient(config)
             # Historical FinED samples are diagnostic-only. New CLFEC correction
             # examples have a different contract and must not be silently mapped
             # into the fifteen-label detector used by this page.
@@ -142,7 +173,7 @@ def text_review_page():
             if use_pi:
                 from yjcheck.agent_workflow import run_agent_text
                 report, _ = run_agent_text(content, document_id="text-" + hashlib.sha256(content.encode()).hexdigest(),
-                                           model_config=ModelConfig.from_env(), kb_dir=kb_dir.strip() or None,
+                                           model_config=config, kb_dir=kb_dir.strip() or None,
                                            examples=examples)
             else:
                 report = detect_text(content, document_id="text-" + hashlib.sha256(content.encode()).hexdigest(),

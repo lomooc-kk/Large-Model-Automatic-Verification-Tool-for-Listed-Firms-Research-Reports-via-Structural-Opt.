@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 import sys
 from pathlib import Path
 
@@ -47,6 +48,20 @@ st.set_page_config(page_title="研报纠错助手 · 核查台", layout="wide")
 
 # ---------------------------------------------------------------- 上传与设置
 
+def api_key_format_error(key: str) -> str | None:
+    """校验 API 密钥格式；返回错误提示，None 表示合理。留空回退环境变量，不算错误。"""
+    key = (key or "").strip()
+    if not key:
+        return None
+    if any(ch.isspace() for ch in key):
+        return "密钥不能包含空格或换行，请检查是否多复制了空白"
+    if re.search(r"[\u4e00-\u9fff\uff00-\uffef]", key):
+        return "密钥包含中文或全角字符，请重新复制"
+    if len(key) < 8:
+        return "密钥过短，疑似输入不完整"
+    return None
+
+
 def settings_panel() -> dict:
     with st.sidebar:
         st.header("输入材料")
@@ -71,6 +86,16 @@ def settings_panel() -> dict:
             kb_dir = st.text_input("证据库目录", key="agent_kb_dir", help="B 模块 export-kb 生成的目录；资料需已导入 OpenViking。")
             allow_fallback = st.checkbox("检索服务不可用时使用本地检索", key="agent_allow_fallback",
                                          help="降级会显示在结果中；原文和来源哈希仍须核对。")
+        api_key = ""
+        api_key_error = None
+        if use_model:
+            api_key = st.text_input("API 密钥", type="password", key="api_key_input",
+                                    help="DeepSeek 密钥通常以 sk- 开头；留空则使用环境变量 YJCHECK_API_KEY")
+            api_key_error = api_key_format_error(api_key)
+            if api_key_error:
+                st.markdown(
+                    f'<p style="color:#e5484d;font-size:0.8rem;line-height:1;margin-top:-12px;">{api_key_error}</p>',
+                    unsafe_allow_html=True)
         st.divider()
         if st.button("没有文件？生成演示样例并预填", key="demo_pdfs"):
             sys.path.insert(0, str(BASE / "tools"))
@@ -80,7 +105,8 @@ def settings_panel() -> dict:
             st.toast("已生成演示研报与财报，可直接点「开始核查」。")
     return {"report": report_upload, "sources": source_uploads,
             "company": (company or "").strip(), "engine": engine, "use_model": use_model,
-            "use_pi": use_pi, "kb_dir": kb_dir.strip(), "allow_fallback": allow_fallback}
+            "use_pi": use_pi, "kb_dir": kb_dir.strip(), "allow_fallback": allow_fallback,
+            "api_key": ("" if api_key_error else api_key.strip())}
 
 
 def save_upload(upload) -> Path:
@@ -93,10 +119,12 @@ def save_upload(upload) -> Path:
 
 def execute_check(report_path: Path, source_paths: list[Path], company: str,
                   engine: str, use_model: bool, use_pi: bool = False,
-                  kb_dir: str = "", allow_fallback: bool = False):
+                  kb_dir: str = "", allow_fallback: bool = False, api_key: str = ""):
     if use_pi:
         from yjcheck.agent_workflow import run_agent_check
         config = ModelConfig.from_env()
+        if api_key:
+            config.api_key = api_key
         config.review_text = use_model
         with st.spinner("Pi 正在安排核查与补证…"):
             result, out_dir = run_agent_check(str(report_path), [str(p) for p in source_paths],
@@ -110,6 +138,8 @@ def execute_check(report_path: Path, source_paths: list[Path], company: str,
         if not config.base_url or not config.model:
             st.warning("已勾选大模型辅助抽取，但未配置 YJCHECK_BASE_URL / YJCHECK_MODEL，本次按离线规则运行。")
         else:
+            if api_key:
+                config.api_key = api_key
             config.review_text = True
             model_config = config
     progress = st.progress(0.0, text="解析与核查中…")
@@ -591,7 +621,7 @@ def main() -> None:
         try:
             result, out_dir, model_used = execute_check(
                 report_path, source_paths, options["company"], options["engine"], options["use_model"],
-                options["use_pi"], options["kb_dir"], options["allow_fallback"])
+                options["use_pi"], options["kb_dir"], options["allow_fallback"], options["api_key"])
         except (ValueError, OSError, ImportError, RuntimeError) as exc:
             st.error(f"核查未完成：{exc}")
             return
