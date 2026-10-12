@@ -1,0 +1,51 @@
+### ============================================================
+### LLaMA-Factory 继续预训练（CPT）配置 · 金融领域语料库
+### 用法：
+###   1) 先按 examples/llamafactory/README.md 把数据放到 LLaMA-Factory 的 data/ 下
+###   2) llamafactory-cli train examples/llamafactory/llamafactory_cpt.yaml
+### ============================================================
+
+### ---- 模型 ----
+model_name_or_path: Qwen/Qwen2.5-1.5B     # 换成你本地的模型路径亦可
+trust_remote_code: true
+
+### ---- 训练方式：pt = 继续预训练 ----
+stage: pt
+do_train: true
+finetuning_type: lora                      # 显存小用 lora；要全参微调改为 full
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+lora_target: all
+
+### ---- 数据 ----
+dataset: finance_zh_cpt                    # 对应 dataset_info.json 中的键名
+dataset_dir: data                          # LLaMA-Factory 的 data 目录
+cutoff_len: 2048
+preprocessing_num_workers: 8
+overwrite_cache: true
+
+### ---- 输出 ----
+output_dir: saves/qwen2.5-1.5b/finance-cpt
+logging_steps: 10
+save_steps: 1000
+save_total_limit: 3
+plot_loss: true
+overwrite_output_dir: true
+
+### ---- 优化 ----
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-5
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+weight_decay: 0.1
+
+### ---- 精度与显存 ----
+bf16: true
+gradient_checkpointing: true
+
+### ---- 防遗忘提示 ----
+### 建议把通用中文语料按 30%~50% 混入 dataset（见 train/mix_general_corpus.py），
+### 例如：dataset: finance_zh_cpt,general_zh_mixed

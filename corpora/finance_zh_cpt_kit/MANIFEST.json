@@ -1,0 +1,37 @@
+{
+  "files": {
+    "data/finance_zh.train.jsonl.gz": {
+      "lines": 665605,
+      "bytes": 1132213560,
+      "sha256": "fea0d6ba7648919f4cbd352a3385711424226d768d7c47cf01f90910c1807a65"
+    },
+    "data/finance_zh.val.jsonl.gz": {
+      "lines": 35153,
+      "bytes": 61444774,
+      "sha256": "95732dfdbad9230351e31ea9ff628062156c17471267dcffb41f167edb057017"
+    },
+    "samples/sample_1000.jsonl": {
+      "lines": 1000
+    }
+  },
+  "totals": {
+    "documents_kept": 700758,
+    "documents_raw": 733547,
+    "train": 665605,
+    "val": 35153,
+    "chars": 1387907908,
+    "est_tokens": 1179721721,
+    "distinct_publish_sources": 1319
+  },
+  "quality": {
+    "malformed_or_invalid_utf8": 0,
+    "empty_text": 0,
+    "too_short_dropped": 12542,
+    "empty_title_dropped": 5,
+    "duplicate_dropped": 20239,
+    "replacement_char_dropped": 3,
+    "missing_or_invalid_date": 1,
+    "dup_ratio": 0.027591,
+    "keep_ratio": 0.955301
+  }
+}
