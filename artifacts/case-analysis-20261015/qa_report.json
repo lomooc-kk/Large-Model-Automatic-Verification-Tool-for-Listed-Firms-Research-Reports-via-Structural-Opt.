@@ -1,0 +1,27 @@
+{
+  "pdf_pages": 30,
+  "source_cases": 12,
+  "source_documents": 10,
+  "case_quote_presence_checks": "12/12 passed",
+  "no_replacement_characters_or_black_square_text": true,
+  "page_boundary_checks": "all30 passed",
+  "rendered_page_count": 30,
+  "visual_review_status": "passed",
+  "pdf_bytes": 810245,
+  "pdf_sha256": "68915aa29b0df77723157b4e4eb63728cdb43882a84ffbee54c52f49237d5a8f",
+  "visual_review_scope": "All30 pages inspected in contact sheets; full-size inspection of critical evidence/experiment pages and all edited final pages.",
+  "final_text_and_boundary_checks": "passed",
+  "all_parser_probe_pairs_reproduced": true,
+  "minimum_layout_scale": 1,
+  "body_font_size_pt": 10.2,
+  "final_deliverables": {
+    "pdf": "研报数值错误_12例深度Case分析报告_20261015.pdf",
+    "editable_markdown": "研报数值错误_12例深度Case分析报告_可编辑.md"
+  },
+  "public_export": {
+    "portable_paths": true,
+    "individual_case_pages": 12,
+    "pdf_sha256_unchanged": true,
+    "original_group_pdf_and_task_excluded": true
+  }
+}

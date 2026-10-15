@@ -1,0 +1,1321 @@
+{
+  "000625": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000625",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "冗余语句",
+        "spans": [
+          {
+            "start": 247,
+            "end": 333,
+            "text": "布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）。布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）；"
+          }
+        ],
+        "reason": "相邻两个整句逐字重复，无新增信息。",
+        "status": "confirmed_error",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 247,
+            "end": 333,
+            "text": "布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）。布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）；"
+          },
+          {
+            "kind": "deterministic",
+            "check": "literal_duplicate",
+            "text": "布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）。布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）；"
+          }
+        ],
+        "detector_id": "verified.redundant_sentence",
+        "validation": "deterministic",
+        "verification_spans": [
+          {
+            "start": 247,
+            "end": 333,
+            "text": "布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）。布伦特原油期货结算价为62.78美元/桶，较上周下降2.00美元/桶（-3.09%）；"
+          }
+        ],
+        "id": "7196e7bce1f1282ae49015f6",
+        "review_priority": "confirmed"
+      },
+      {
+        "error_type": "金融要素缺失",
+        "spans": [
+          {
+            "start": 962,
+            "end": 1103,
+            "text": "【美国成品油库存】截至2025年05月23日当周，美国汽油总体、车用汽油、柴油、航空煤油库存分别为22308.1、1496.3、  、4271.6万桶，较上周分别-244.1（-1.08%）、-133.1（-8.17%）、-72.4（-0.70%）、+60.7（+1.44%）万桶。"
+          }
+        ],
+        "reason": "原文并列标点或连词后直接结束，存在表面空槽；需核对是多余标点还是必要分句缺失，不推定缺失字段。",
+        "status": "needs_review",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 1025,
+            "end": 1029,
+            "text": "、  、"
+          },
+          {
+            "kind": "deterministic",
+            "check": "suspended_punctuation",
+            "text": "、  、"
+          },
+          {
+            "kind": "source_context",
+            "start": 962,
+            "end": 1103,
+            "text": "【美国成品油库存】截至2025年05月23日当周，美国汽油总体、车用汽油、柴油、航空煤油库存分别为22308.1、1496.3、  、4271.6万桶，较上周分别-244.1（-1.08%）、-133.1（-8.17%）、-72.4（-0.70%）、+60.7（+1.44%）万桶。",
+            "purpose": "closed_list_subject_and_explicit_sibling"
+          }
+        ],
+        "detector_id": "verified.suspended_punctuation",
+        "validation": "surface_gap_requires_review",
+        "source_original_verdict": {
+          "error_type": "金融要素缺失",
+          "status": "confirmed_error",
+          "validation": "deterministic",
+          "reason": "并列标点或连词后直接结束，中间缺失了应有内容。"
+        },
+        "surface_spans": [
+          {
+            "start": 1025,
+            "end": 1029,
+            "text": "、  、"
+          }
+        ],
+        "source_issue_key": "8bdab6d6accd35b876f2e559",
+        "source_structure": {
+          "family": "missing_unnamed_clause",
+          "anchors": [
+            {
+              "start": 1025,
+              "end": 1029,
+              "text": "、  、"
+            }
+          ],
+          "canonical_type": "金融要素缺失",
+          "proof_status": "needs_review",
+          "checks": [
+            {
+              "kind": "deterministic",
+              "check": "suspended_punctuation",
+              "text": "、  、"
+            },
+            {
+              "check": "surface_gap_only",
+              "business_field_missing_confirmed": false
+            },
+            {
+              "check": "source_missing_field_boundary",
+              "field_explicitly_named": false
+            }
+          ]
+        },
+        "id": "f993e5e02fda78f5384b6708",
+        "review_priority": "high"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 1478,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          1478
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 1478,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000673": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000673",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "金融要素缺失",
+        "spans": [
+          {
+            "start": 54,
+            "end": 186,
+            "text": "n型复投料成交价格区间为3.60-3.80万元/吨，成交均价为3.75万元/吨，环比下降2.85%；n型颗粒硅成交价格区间为3.40-3.50万元/吨，成交均价为3.45万元/吨，环比下降4.17%；p型多晶硅成交价格区间为3.00-3.30万元/吨，，环比持平。"
+          }
+        ],
+        "reason": "原文并列标点或连词后直接结束，存在表面空槽；需核对是多余标点还是必要分句缺失，不推定缺失字段。",
+        "status": "needs_review",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 179,
+            "end": 181,
+            "text": "，，"
+          },
+          {
+            "kind": "deterministic",
+            "check": "suspended_punctuation",
+            "text": "，，"
+          },
+          {
+            "kind": "source_context",
+            "start": 54,
+            "end": 186,
+            "text": "n型复投料成交价格区间为3.60-3.80万元/吨，成交均价为3.75万元/吨，环比下降2.85%；n型颗粒硅成交价格区间为3.40-3.50万元/吨，成交均价为3.45万元/吨，环比下降4.17%；p型多晶硅成交价格区间为3.00-3.30万元/吨，，环比持平。",
+            "purpose": "closed_list_subject_and_explicit_sibling"
+          }
+        ],
+        "detector_id": "verified.suspended_punctuation",
+        "validation": "surface_gap_requires_review",
+        "source_original_verdict": {
+          "error_type": "金融要素缺失",
+          "status": "confirmed_error",
+          "validation": "deterministic",
+          "reason": "并列标点或连词后直接结束，中间缺失了应有内容。"
+        },
+        "surface_spans": [
+          {
+            "start": 179,
+            "end": 181,
+            "text": "，，"
+          }
+        ],
+        "source_issue_key": "71e073d3da4bc6e0d80d1252",
+        "source_structure": {
+          "family": "missing_unnamed_clause",
+          "anchors": [
+            {
+              "start": 179,
+              "end": 181,
+              "text": "，，"
+            }
+          ],
+          "canonical_type": "金融要素缺失",
+          "proof_status": "needs_review",
+          "checks": [
+            {
+              "kind": "deterministic",
+              "check": "suspended_punctuation",
+              "text": "，，"
+            },
+            {
+              "check": "surface_gap_only",
+              "business_field_missing_confirmed": false
+            },
+            {
+              "check": "source_missing_field_boundary",
+              "field_explicitly_named": false
+            }
+          ]
+        },
+        "id": "5b5b9fbc3440aaef9123cfce",
+        "review_priority": "high"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 672,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          672
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 672,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000691": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000691",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 903,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          903
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 903,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000614": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000614",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "属性值缺失错误",
+        "spans": [
+          {
+            "start": 204,
+            "end": 295,
+            "text": "周观点：上周化学制药板块涨幅领先，5月30日至6月3日2025年美国临床肿瘤学会（）年会在美国芝加哥举行，本届年会中国专家的发言数量再创新高，ASCO的召开进一步推动创新药投资热情。"
+          }
+        ],
+        "reason": "出现空括号/空引号/空书名号，属性值或名称缺失。",
+        "status": "confirmed_error",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 244,
+            "end": 246,
+            "text": "（）"
+          },
+          {
+            "kind": "deterministic",
+            "check": "empty_placeholder",
+            "text": "（）"
+          }
+        ],
+        "detector_id": "verified.empty_placeholder",
+        "validation": "deterministic",
+        "verification_spans": [
+          {
+            "start": 244,
+            "end": 246,
+            "text": "（）"
+          }
+        ],
+        "source_issue_key": "b9a87127b9df6cdcaa29a0f8",
+        "source_structure": {
+          "family": "empty_attribute",
+          "anchors": [
+            {
+              "start": 244,
+              "end": 246,
+              "text": "（）"
+            }
+          ],
+          "canonical_type": "属性值缺失错误",
+          "proof_status": "confirmed_error",
+          "checks": [
+            {
+              "kind": "deterministic",
+              "check": "empty_placeholder",
+              "text": "（）"
+            }
+          ]
+        },
+        "id": "cf3e1a5c845785f43fc31091",
+        "review_priority": "confirmed"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [
+      {
+        "metric": "parent_profit",
+        "metric_text": "归母净利润",
+        "start": 1253,
+        "end": 1353,
+        "text": "我们预估2024-2027年间归母净利润CAGR约达145%，一方面系公司依靠厂牌首推等高毛利业务提升综合毛利率，另一方面系公司规模效应以及精细化管理带来销售费用率等下降，从而提升公司整体净利率水平。",
+        "quantities": [
+          {
+            "value": "145",
+            "unit": "%",
+            "start": 1279,
+            "end": 1283
+          }
+        ],
+        "periods": [
+          "2027年"
+        ],
+        "entity_mentions": [
+          "一方面系公司",
+          "另一方面系公司",
+          "从而提升公司"
+        ]
+      },
+      {
+        "metric": "gross_margin",
+        "metric_text": "毛利率",
+        "start": 1253,
+        "end": 1353,
+        "text": "我们预估2024-2027年间归母净利润CAGR约达145%，一方面系公司依靠厂牌首推等高毛利业务提升综合毛利率，另一方面系公司规模效应以及精细化管理带来销售费用率等下降，从而提升公司整体净利率水平。",
+        "quantities": [
+          {
+            "value": "145",
+            "unit": "%",
+            "start": 1279,
+            "end": 1283
+          }
+        ],
+        "periods": [
+          "2027年"
+        ],
+        "entity_mentions": [
+          "一方面系公司",
+          "另一方面系公司",
+          "从而提升公司"
+        ]
+      },
+      {
+        "metric": "net_margin",
+        "metric_text": "净利率",
+        "start": 1253,
+        "end": 1353,
+        "text": "我们预估2024-2027年间归母净利润CAGR约达145%，一方面系公司依靠厂牌首推等高毛利业务提升综合毛利率，另一方面系公司规模效应以及精细化管理带来销售费用率等下降，从而提升公司整体净利率水平。",
+        "quantities": [
+          {
+            "value": "145",
+            "unit": "%",
+            "start": 1279,
+            "end": 1283
+          }
+        ],
+        "periods": [
+          "2027年"
+        ],
+        "entity_mentions": [
+          "一方面系公司",
+          "另一方面系公司",
+          "从而提升公司"
+        ]
+      },
+      {
+        "metric": "parent_profit",
+        "metric_text": "归母净利润",
+        "start": 1387,
+        "end": 1465,
+        "text": "②康臣药业，近3年公司归母净利润增速均在14%以上，且近3年ROE维持在21%以上，近3年股息率维持在7%以上，2025年PE约8倍（ifind一致预期）。",
+        "quantities": [
+          {
+            "value": "14",
+            "unit": "%",
+            "start": 1407,
+            "end": 1410
+          },
+          {
+            "value": "21",
+            "unit": "%",
+            "start": 1423,
+            "end": 1426
+          },
+          {
+            "value": "7",
+            "unit": "%",
+            "start": 1438,
+            "end": 1440
+          },
+          {
+            "value": "8",
+            "unit": "倍",
+            "start": 1451,
+            "end": 1453
+          }
+        ],
+        "periods": [
+          "2025年"
+        ],
+        "entity_mentions": [
+          "年公司"
+        ]
+      }
+    ],
+    "coverage": {
+      "complete": false,
+      "total_chars": 1829,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          1829
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 1829,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 4,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000689": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000689",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "属性值缺失错误",
+        "spans": [
+          {
+            "start": 285,
+            "end": 412,
+            "text": "录得平均正收益的基金类型有：债券型基金、货币市场基金、另类型基金和QDII基金，其中由于黄金资产优异表现，另类型基金整体平均收益最高，上涨，其次是QDII基金，主要是海外的医药生物主题基金表现较好，可能与近期举行的2025年美国临床肿瘤学会（）年会有关。"
+          }
+        ],
+        "reason": "出现空括号/空引号/空书名号，属性值或名称缺失。",
+        "status": "confirmed_error",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 405,
+            "end": 407,
+            "text": "（）"
+          },
+          {
+            "kind": "deterministic",
+            "check": "empty_placeholder",
+            "text": "（）"
+          }
+        ],
+        "detector_id": "verified.empty_placeholder",
+        "validation": "deterministic",
+        "verification_spans": [
+          {
+            "start": 405,
+            "end": 407,
+            "text": "（）"
+          }
+        ],
+        "source_issue_key": "41083f7ea642a35cacf6c1ef",
+        "source_structure": {
+          "family": "empty_attribute",
+          "anchors": [
+            {
+              "start": 405,
+              "end": 407,
+              "text": "（）"
+            }
+          ],
+          "canonical_type": "属性值缺失错误",
+          "proof_status": "confirmed_error",
+          "checks": [
+            {
+              "kind": "deterministic",
+              "check": "empty_placeholder",
+              "text": "（）"
+            }
+          ]
+        },
+        "id": "2fa338b5c87dfbd269b4c34d",
+        "review_priority": "confirmed"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 1155,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          1155
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 1155,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000640": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000640",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "属性值缺失错误",
+        "spans": [
+          {
+            "start": 868,
+            "end": 933,
+            "text": "惠泰医疗（）：公司发布公告，子公司湖南埃普特医疗器械有限公司取得一项医疗器械注册证，公司产品冠状动脉棘突球囊扩张导管获得批准上市。"
+          }
+        ],
+        "reason": "出现空括号/空引号/空书名号，属性值或名称缺失。",
+        "status": "confirmed_error",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 872,
+            "end": 874,
+            "text": "（）"
+          },
+          {
+            "kind": "deterministic",
+            "check": "empty_placeholder",
+            "text": "（）"
+          }
+        ],
+        "detector_id": "verified.empty_placeholder",
+        "validation": "deterministic",
+        "verification_spans": [
+          {
+            "start": 872,
+            "end": 874,
+            "text": "（）"
+          }
+        ],
+        "source_issue_key": "e45c31bcd900e61e95bf5311",
+        "source_structure": {
+          "family": "empty_attribute",
+          "anchors": [
+            {
+              "start": 872,
+              "end": 874,
+              "text": "（）"
+            }
+          ],
+          "canonical_type": "属性值缺失错误",
+          "proof_status": "confirmed_error",
+          "checks": [
+            {
+              "kind": "deterministic",
+              "check": "empty_placeholder",
+              "text": "（）"
+            }
+          ]
+        },
+        "id": "3298db17a29d7566f084d498",
+        "review_priority": "confirmed"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 962,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          962
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 962,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000623": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000623",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "时间矛盾",
+        "spans": [
+          {
+            "start": 147,
+            "end": 193,
+            "text": "2025年4-1月，我国逆变器累计出口金额为179.24亿元，同比增长9.37%，保持稳定。"
+          }
+        ],
+        "reason": "区间两端本身合法，但按同年/同月省略读法结束早于开始；需核对是否遗漏跨期说明，不推定正确日期。",
+        "status": "needs_review",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 147,
+            "end": 156,
+            "text": "2025年4-1月"
+          },
+          {
+            "kind": "deterministic",
+            "check": "reversed_date_range",
+            "start": 147,
+            "end": 156,
+            "first": 4,
+            "last": 1,
+            "granularity": "month",
+            "same_period_basis": "explicit_year",
+            "requires_review": true
+          }
+        ],
+        "detector_id": "structured.reversed_date_range",
+        "validation": "rule_candidate",
+        "source_issue_key": "ddfd11eec2a2167491425040",
+        "source_structure": {
+          "family": "reversed_legal_date_range",
+          "anchors": [
+            {
+              "start": 147,
+              "end": 156,
+              "text": "2025年4-1月"
+            }
+          ],
+          "canonical_type": "时间矛盾",
+          "proof_status": "needs_review",
+          "checks": [
+            {
+              "kind": "deterministic",
+              "check": "reversed_date_range",
+              "start": 147,
+              "end": 156,
+              "first": 4,
+              "last": 1,
+              "granularity": "month",
+              "same_period_basis": "explicit_year",
+              "requires_review": true
+            }
+          ]
+        },
+        "id": "e49c0fa5430d84bbed53eff0",
+        "review_priority": "high"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 2014,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          2014
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 2014,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000618": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000618",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "金融要素缺失",
+        "spans": [
+          {
+            "start": 1092,
+            "end": 1198,
+            "text": "截止到5月29日，65度黑钨精矿均价在16.95万元/吨，较上周上调0.5万元/吨；仲钨酸铵在24.8万元/吨，较上周上调0.55万元/吨，70钨铁均价在24.7万元/吨，较上周持平，碳化钨粉在359元/千克，。"
+          }
+        ],
+        "reason": "原文并列标点或连词后直接结束，存在表面空槽；需核对是多余标点还是必要分句缺失，不推定缺失字段。",
+        "status": "needs_review",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 1196,
+            "end": 1198,
+            "text": "，。"
+          },
+          {
+            "kind": "deterministic",
+            "check": "suspended_punctuation",
+            "text": "，。"
+          },
+          {
+            "kind": "source_context",
+            "start": 1092,
+            "end": 1198,
+            "text": "截止到5月29日，65度黑钨精矿均价在16.95万元/吨，较上周上调0.5万元/吨；仲钨酸铵在24.8万元/吨，较上周上调0.55万元/吨，70钨铁均价在24.7万元/吨，较上周持平，碳化钨粉在359元/千克，。",
+            "purpose": "closed_list_subject_and_explicit_sibling"
+          }
+        ],
+        "detector_id": "verified.suspended_punctuation",
+        "validation": "surface_gap_requires_review",
+        "source_original_verdict": {
+          "error_type": "金融要素缺失",
+          "status": "confirmed_error",
+          "validation": "deterministic",
+          "reason": "并列标点或连词后直接结束，中间缺失了应有内容。"
+        },
+        "surface_spans": [
+          {
+            "start": 1196,
+            "end": 1198,
+            "text": "，。"
+          }
+        ],
+        "source_issue_key": "5aebab407f34ac6863a2834d",
+        "source_structure": {
+          "family": "missing_unnamed_clause",
+          "anchors": [
+            {
+              "start": 1196,
+              "end": 1198,
+              "text": "，。"
+            }
+          ],
+          "canonical_type": "金融要素缺失",
+          "proof_status": "needs_review",
+          "checks": [
+            {
+              "kind": "deterministic",
+              "check": "suspended_punctuation",
+              "text": "，。"
+            },
+            {
+              "check": "surface_gap_only",
+              "business_field_missing_confirmed": false
+            },
+            {
+              "check": "source_missing_field_boundary",
+              "field_explicitly_named": false
+            }
+          ]
+        },
+        "id": "e29758be5d210da5d347aa8c",
+        "review_priority": "high"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 1636,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          1636
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 1636,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000631": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000631",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 856,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          856
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 856,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  },
+  "000682": {
+    "schema_version": "text-review/1.0",
+    "document_id": "fined:eval_data:5ffe80ef7c529d19:000682",
+    "scene": "",
+    "detector": "hybrid",
+    "errors": [
+      {
+        "error_type": "冗余语句",
+        "spans": [
+          {
+            "start": 444,
+            "end": 517,
+            "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+          }
+        ],
+        "reason": "相邻段落存在字面相同内容；仅确认来源位置，需核对标题、摘要、示例等段落功能，不能自动判定冗余。",
+        "status": "needs_review",
+        "evidence": [
+          {
+            "kind": "source_text",
+            "start": 444,
+            "end": 517,
+            "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+          },
+          {
+            "kind": "deterministic",
+            "check": "literal_duplicate",
+            "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+          }
+        ],
+        "detector_id": "verified.redundant_sentence",
+        "validation": "paragraph_repetition_requires_review",
+        "source_rule_proofs": [
+          {
+            "detector_id": "verified.redundant_sentence",
+            "reason": "相邻两个整句逐字重复，无新增信息。",
+            "status": "confirmed_error",
+            "spans": [
+              {
+                "start": 444,
+                "end": 517,
+                "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+              }
+            ],
+            "verification_spans": [
+              {
+                "start": 444,
+                "end": 517,
+                "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+              }
+            ],
+            "evidence": [
+              {
+                "kind": "source_text",
+                "start": 444,
+                "end": 517,
+                "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+              },
+              {
+                "kind": "deterministic",
+                "check": "literal_duplicate",
+                "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+              }
+            ]
+          }
+        ],
+        "source_original_verdict": {
+          "error_type": "冗余语句",
+          "status": "confirmed_error",
+          "validation": "deterministic",
+          "reason": "相邻两个整句逐字重复，无新增信息。"
+        },
+        "surface_spans": [
+          {
+            "start": 444,
+            "end": 517,
+            "text": "聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。\n聚烯烃方面，上周聚乙烯、聚丙烯成本支撑窄幅走弱，产品价格、价差震荡下行。"
+          }
+        ],
+        "id": "224d8e377852e4c9983d1766",
+        "review_priority": "high"
+      }
+    ],
+    "traces": [],
+    "raw_candidates": [],
+    "rejected_candidates": [],
+    "quote_boundary_observations": [],
+    "model_candidate_representation": [],
+    "numeric_index": [],
+    "coverage": {
+      "complete": false,
+      "total_chars": 1171,
+      "execution_complete": false,
+      "candidate_quality_complete": true,
+      "processed_chars": 0,
+      "processed_ranges": [],
+      "unprocessed_ranges": [
+        [
+          0,
+          1171
+        ]
+      ],
+      "context_mode": "whole",
+      "model_ran": false,
+      "requested_model": true,
+      "model_complete": false,
+      "rules_complete": true,
+      "rules_processed_chars": 1171,
+      "global_linking_complete": true,
+      "truncation_reasons": [
+        "model_unavailable_offline_rules_only"
+      ],
+      "global_link_strategy": "repeated_known_metric_with_original_sentences",
+      "indexed_metric_mentions": 0,
+      "planned_model_calls": 0,
+      "finished_model_calls": 0,
+      "supported_error_types": [
+        "时间信息非法",
+        "冗余语句",
+        "格式错误",
+        "数值缺失",
+        "属性值缺失错误",
+        "术语误用",
+        "法规引用错误",
+        "模糊语言",
+        "数值单位错误",
+        "金融要素缺失",
+        "语义逻辑矛盾",
+        "时间矛盾",
+        "数值不一致错误",
+        "计算错误",
+        "不一致条款"
+      ],
+      "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+      "external_source_documents_used": false,
+      "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+      "span_normalization": "source_adjacent_v1",
+      "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+    }
+  }
+}

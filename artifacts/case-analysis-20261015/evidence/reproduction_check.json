@@ -1,0 +1,159 @@
+{
+  "portable_source_and_offset_checks": [
+    {
+      "case_id": "U01",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "U02",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "U03",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "M01",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "M02",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "M03",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "I01",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "I02",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "I03",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "C01",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "C02",
+      "content_sha_and_offsets": "passed"
+    },
+    {
+      "case_id": "C03",
+      "content_sha_and_offsets": "passed"
+    }
+  ],
+  "calculations": "passed",
+  "expected_code_commit": "a3a37752c8e7c34ec2f38cab04d6afbb25a27a2e",
+  "model_rerun": false,
+  "offline_documents": 10,
+  "offline_target_matches": [],
+  "parser_probes": [
+    {
+      "probe_id": "P01",
+      "outcomes": {
+        "before": {
+          "actual": [],
+          "expected": [],
+          "same_as_pack": true
+        },
+        "after": {
+          "actual": [
+            [
+              "数值缺失",
+              "verified.percent_gap"
+            ]
+          ],
+          "expected": [
+            [
+              "数值缺失",
+              "verified.percent_gap"
+            ]
+          ],
+          "same_as_pack": true
+        }
+      }
+    },
+    {
+      "probe_id": "P02",
+      "outcomes": {
+        "before": {
+          "actual": [],
+          "expected": [],
+          "same_as_pack": true
+        },
+        "after": {
+          "actual": [
+            [
+              "数值不一致错误",
+              "verified.rank_within_total"
+            ]
+          ],
+          "expected": [
+            [
+              "数值不一致错误",
+              "verified.rank_within_total"
+            ]
+          ],
+          "same_as_pack": true
+        }
+      }
+    },
+    {
+      "probe_id": "P03",
+      "outcomes": {
+        "before": {
+          "actual": [],
+          "expected": [],
+          "same_as_pack": true
+        },
+        "after": {
+          "actual": [
+            [
+              "数值单位错误",
+              "verified.unit_dimension"
+            ]
+          ],
+          "expected": [
+            [
+              "数值单位错误",
+              "verified.unit_dimension"
+            ]
+          ],
+          "same_as_pack": true
+        }
+      }
+    },
+    {
+      "probe_id": "P04",
+      "outcomes": {
+        "before": {
+          "actual": [],
+          "expected": [],
+          "same_as_pack": true
+        },
+        "after": {
+          "actual": [
+            [
+              "计算错误",
+              "verified.arithmetic"
+            ]
+          ],
+          "expected": [
+            [
+              "计算错误",
+              "verified.arithmetic"
+            ]
+          ],
+          "same_as_pack": true
+        }
+      }
+    }
+  ]
+}

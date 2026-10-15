@@ -1,4 +1,7 @@
 # Evidence hashes must survive Git checkout on Windows and Unix unchanged.
 artifacts/research442-rerun-20261005/** -text
 artifacts/case-diagnostics-20261005/** -text
+artifacts/case-analysis-20261015/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/case-analysis-20261015/*.pdf binary
+artifacts/case-analysis-20261015/evidence/images/*.png binary
 docs/validation/pi-openviking-20261010/** -text
