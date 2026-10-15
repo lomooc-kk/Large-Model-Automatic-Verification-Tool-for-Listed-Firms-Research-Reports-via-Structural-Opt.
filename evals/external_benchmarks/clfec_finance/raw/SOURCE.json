@@ -1,0 +1,17 @@
+{
+  "dataset": "CLFEC",
+  "full_name": "CLFEC: A New Task for Unified Linguistic and Factual Error Correction in paragraph-level Chinese Professional Writing",
+  "paper": "arXiv:2602.23845 (v2, 2026-03-29)",
+  "venue": "AACL-IJCNLP 2026 Main Conference",
+  "authors": ["Jian Kai", "Zidong Zhang", "Jiwen Chen", "Zhengxiang Wu", "Songtao Sun", "Fuyang Li", "Yang Cao", "Qiang Liu"],
+  "upstream_repo": "https://github.com/jiu2021/CLFEC-Dataset",
+  "upstream_commit": "af4edeae56eb56846532cd1af62fe03a6586a38c",
+  "upstream_commit_date": "2026-09-22T07:49:34Z",
+  "file_path_in_repo": "data/CLFEC.json",
+  "file_url": "https://raw.githubusercontent.com/jiu2021/CLFEC-Dataset/af4edeae56eb56846532cd1af62fe03a6586a38c/data/CLFEC.json",
+  "file_sha256": "807337618f89d0e5384c0553734a925f907bd8eb03182adbbb2a4e230efe006b",
+  "file_bytes": 3262381,
+  "license": "MIT",
+  "license_note": "上游仓库 LICENSE 为 MIT License, Copyright (c) 2026 The CLFEC Authors。本目录仅做领域筛选与输入/答案分离，未修改原始标注内容。",
+  "retrieved_at": "2026-10-09"
+}

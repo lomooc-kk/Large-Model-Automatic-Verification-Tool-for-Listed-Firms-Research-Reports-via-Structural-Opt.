@@ -1,0 +1,80 @@
+{
+  "dataset": "CLFEC-Finance",
+  "task": "中文金融段落：语言错误 + 事实错误 联合纠正",
+  "language": "zh",
+  "source": {
+    "name": "CLFEC",
+    "upstream_repo": "https://github.com/jiu2021/CLFEC-Dataset",
+    "upstream_commit": "af4edeae56eb56846532cd1af62fe03a6586a38c",
+    "file": "data/CLFEC.json",
+    "file_sha256": "807337618f89d0e5384c0553734a925f907bd8eb03182adbbb2a4e230efe006b",
+    "license": "MIT (Copyright (c) 2026 The CLFEC Authors)"
+  },
+  "filter": {
+    "domain": "Finance",
+    "splits": [
+      "mix",
+      "fec_only",
+      "lec_only",
+      "no_error"
+    ],
+    "kept": 268,
+    "excluded": 0,
+    "total_rows_in_full_dataset": 925,
+    "defective_rows_in_full_dataset": 6,
+    "defective_rows_in_finance": 0
+  },
+  "splits": {
+    "mix": {
+      "paragraphs": 113,
+      "edits": 340,
+      "error_type_counts": {
+        "Fact_Error": 129,
+        "Grammar_Error": 35,
+        "Punc_Error": 56,
+        "Word_Error": 120
+      }
+    },
+    "fec_only": {
+      "paragraphs": 57,
+      "edits": 69,
+      "error_type_counts": {
+        "Fact_Error": 69
+      }
+    },
+    "lec_only": {
+      "paragraphs": 66,
+      "edits": 125,
+      "error_type_counts": {
+        "Grammar_Error": 30,
+        "Punc_Error": 30,
+        "Word_Error": 65
+      }
+    },
+    "no_error": {
+      "paragraphs": 32,
+      "edits": 0,
+      "error_type_counts": {}
+    }
+  },
+  "totals": {
+    "paragraphs": 268,
+    "edits": 534,
+    "characters": 97329
+  },
+  "files": {
+    "inputs": [
+      "inputs.mix.jsonl",
+      "inputs.fec_only.jsonl",
+      "inputs.lec_only.jsonl",
+      "inputs.no_error.jsonl"
+    ],
+    "gold": [
+      "gold.mix.jsonl",
+      "gold.fec_only.jsonl",
+      "gold.lec_only.jsonl",
+      "gold.no_error.jsonl"
+    ]
+  },
+  "field_policy": "inputs.* 只含 sample_id 与 input_text；corrected_text / cors / split 等答案字段只出现在 gold.* 中。"
+}
