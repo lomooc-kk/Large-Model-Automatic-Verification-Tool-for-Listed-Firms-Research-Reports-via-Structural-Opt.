@@ -1,0 +1,270 @@
+[
+  {
+    "page": 1,
+    "section": "封面",
+    "case_id": null,
+    "scale": 1,
+    "cover": true
+  },
+  {
+    "page": 2,
+    "section": "任务理解与阅读口径",
+    "case_id": null,
+    "scale": 1.0,
+    "used_height": 539.9,
+    "available_height": 728.89,
+    "bottom_y": 236.99
+  },
+  {
+    "page": 3,
+    "section": "案例索引",
+    "case_id": null,
+    "scale": 1.0,
+    "used_height": 624.6,
+    "available_height": 728.89,
+    "bottom_y": 152.29
+  },
+  {
+    "page": 4,
+    "section": "U01 / 数值单位错误 / 证据",
+    "case_id": "U01",
+    "scale": 1.0,
+    "used_height": 609.46,
+    "available_height": 728.89,
+    "bottom_y": 167.43
+  },
+  {
+    "page": 5,
+    "section": "U01 / 数值单位错误 / 实验",
+    "case_id": "U01",
+    "scale": 1.0,
+    "used_height": 546.2,
+    "available_height": 728.89,
+    "bottom_y": 230.69
+  },
+  {
+    "page": 6,
+    "section": "U02 / 数值单位错误 / 证据",
+    "case_id": "U02",
+    "scale": 1.0,
+    "used_height": 610.02,
+    "available_height": 728.89,
+    "bottom_y": 166.87
+  },
+  {
+    "page": 7,
+    "section": "U02 / 数值单位错误 / 实验",
+    "case_id": "U02",
+    "scale": 1.0,
+    "used_height": 578.0,
+    "available_height": 728.89,
+    "bottom_y": 198.89
+  },
+  {
+    "page": 8,
+    "section": "U03 / 数值单位错误 / 证据",
+    "case_id": "U03",
+    "scale": 1.0,
+    "used_height": 593.02,
+    "available_height": 728.89,
+    "bottom_y": 183.87
+  },
+  {
+    "page": 9,
+    "section": "U03 / 数值单位错误 / 实验",
+    "case_id": "U03",
+    "scale": 1.0,
+    "used_height": 582.2,
+    "available_height": 728.89,
+    "bottom_y": 194.69
+  },
+  {
+    "page": 10,
+    "section": "M01 / 数值缺失 / 证据",
+    "case_id": "M01",
+    "scale": 1.0,
+    "used_height": 558.46,
+    "available_height": 728.89,
+    "bottom_y": 218.43
+  },
+  {
+    "page": 11,
+    "section": "M01 / 数值缺失 / 实验",
+    "case_id": "M01",
+    "scale": 1.0,
+    "used_height": 568.7,
+    "available_height": 728.89,
+    "bottom_y": 208.19
+  },
+  {
+    "page": 12,
+    "section": "M02 / 数值缺失 / 证据",
+    "case_id": "M02",
+    "scale": 1.0,
+    "used_height": 627.02,
+    "available_height": 728.89,
+    "bottom_y": 149.87
+  },
+  {
+    "page": 13,
+    "section": "M02 / 数值缺失 / 实验",
+    "case_id": "M02",
+    "scale": 1.0,
+    "used_height": 591.5,
+    "available_height": 728.89,
+    "bottom_y": 185.39
+  },
+  {
+    "page": 14,
+    "section": "M03 / 数值缺失 / 证据",
+    "case_id": "M03",
+    "scale": 1.0,
+    "used_height": 619.62,
+    "available_height": 728.89,
+    "bottom_y": 157.27
+  },
+  {
+    "page": 15,
+    "section": "M03 / 数值缺失 / 实验",
+    "case_id": "M03",
+    "scale": 1.0,
+    "used_height": 559.7,
+    "available_height": 728.89,
+    "bottom_y": 217.19
+  },
+  {
+    "page": 16,
+    "section": "I01 / 数值不一致错误 / 证据",
+    "case_id": "I01",
+    "scale": 1.0,
+    "used_height": 593.02,
+    "available_height": 728.89,
+    "bottom_y": 183.87
+  },
+  {
+    "page": 17,
+    "section": "I01 / 数值不一致错误 / 实验",
+    "case_id": "I01",
+    "scale": 1.0,
+    "used_height": 627.5,
+    "available_height": 728.89,
+    "bottom_y": 149.39
+  },
+  {
+    "page": 18,
+    "section": "I02 / 数值不一致错误 / 证据",
+    "case_id": "I02",
+    "scale": 1.0,
+    "used_height": 592.46,
+    "available_height": 728.89,
+    "bottom_y": 184.43
+  },
+  {
+    "page": 19,
+    "section": "I02 / 数值不一致错误 / 实验",
+    "case_id": "I02",
+    "scale": 1.0,
+    "used_height": 574.5,
+    "available_height": 728.89,
+    "bottom_y": 202.39
+  },
+  {
+    "page": 20,
+    "section": "I03 / 数值不一致错误 / 证据",
+    "case_id": "I03",
+    "scale": 1.0,
+    "used_height": 576.02,
+    "available_height": 728.89,
+    "bottom_y": 200.87
+  },
+  {
+    "page": 21,
+    "section": "I03 / 数值不一致错误 / 实验",
+    "case_id": "I03",
+    "scale": 1.0,
+    "used_height": 563.2,
+    "available_height": 728.89,
+    "bottom_y": 213.69
+  },
+  {
+    "page": 22,
+    "section": "C01 / 计算错误 / 证据",
+    "case_id": "C01",
+    "scale": 1.0,
+    "used_height": 593.02,
+    "available_height": 728.89,
+    "bottom_y": 183.87
+  },
+  {
+    "page": 23,
+    "section": "C01 / 计算错误 / 实验",
+    "case_id": "C01",
+    "scale": 1.0,
+    "used_height": 599.2,
+    "available_height": 728.89,
+    "bottom_y": 177.69
+  },
+  {
+    "page": 24,
+    "section": "C02 / 计算错误 / 证据",
+    "case_id": "C02",
+    "scale": 1.0,
+    "used_height": 644.02,
+    "available_height": 728.89,
+    "bottom_y": 132.87
+  },
+  {
+    "page": 25,
+    "section": "C02 / 计算错误 / 实验",
+    "case_id": "C02",
+    "scale": 1.0,
+    "used_height": 561.9,
+    "available_height": 728.89,
+    "bottom_y": 214.99
+  },
+  {
+    "page": 26,
+    "section": "C03 / 计算错误 / 证据",
+    "case_id": "C03",
+    "scale": 1.0,
+    "used_height": 593.02,
+    "available_height": 728.89,
+    "bottom_y": 183.87
+  },
+  {
+    "page": 27,
+    "section": "C03 / 计算错误 / 实验",
+    "case_id": "C03",
+    "scale": 1.0,
+    "used_height": 559.7,
+    "available_height": 728.89,
+    "bottom_y": 217.19
+  },
+  {
+    "page": 28,
+    "section": "讨论与实验优先级",
+    "case_id": null,
+    "scale": 1.0,
+    "used_height": 522.4,
+    "available_height": 728.89,
+    "bottom_y": 254.49
+  },
+  {
+    "page": 29,
+    "section": "已执行的检查",
+    "case_id": null,
+    "scale": 1.0,
+    "used_height": 560.2,
+    "available_height": 728.89,
+    "bottom_y": 216.69
+  },
+  {
+    "page": 30,
+    "section": "来源与未决事项",
+    "case_id": null,
+    "scale": 1.0,
+    "used_height": 607.1,
+    "available_height": 728.89,
+    "bottom_y": 169.79
+  }
+]

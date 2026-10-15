@@ -1,0 +1,753 @@
+[
+  {
+    "probe_id": "P01",
+    "purpose": "百分号后的全角左括号",
+    "role": "synthetic_parser_probe_not_real_case",
+    "before": {
+      "text": "化学制药周收益率排名第一，涨跌幅为%（相对沪深300收益率为4.91%）；",
+      "errors": [],
+      "coverage": {
+        "complete": false,
+        "total_chars": 37,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            37
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 37,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 0,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [],
+      "structured_relation_rule": [],
+      "arithmetic_aids": []
+    },
+    "after": {
+      "text": "化学制药周收益率排名第一，涨跌幅为%；",
+      "errors": [
+        {
+          "error_type": "数值缺失",
+          "spans": [
+            {
+              "start": 0,
+              "end": 19,
+              "text": "化学制药周收益率排名第一，涨跌幅为%；"
+            }
+          ],
+          "reason": "百分号前缺少数值，增长/占比数字遗漏。",
+          "status": "confirmed_error",
+          "evidence": [
+            {
+              "kind": "source_text",
+              "start": 17,
+              "end": 18,
+              "text": "%"
+            },
+            {
+              "kind": "deterministic",
+              "check": "numeric_gap",
+              "text": "%"
+            }
+          ],
+          "detector_id": "verified.percent_gap",
+          "validation": "deterministic",
+          "verification_spans": [
+            {
+              "start": 17,
+              "end": 18,
+              "text": "%"
+            }
+          ],
+          "source_issue_key": "93f1b9b63405da4f8df95760",
+          "source_structure": {
+            "family": "missing_numeric_slot",
+            "anchors": [
+              {
+                "start": 17,
+                "end": 18,
+                "text": "%"
+              }
+            ],
+            "canonical_type": "数值缺失",
+            "proof_status": "confirmed_error",
+            "checks": [
+              {
+                "kind": "deterministic",
+                "check": "numeric_gap",
+                "text": "%"
+              }
+            ]
+          },
+          "id": "5bd310578af60d2d067806d2",
+          "review_priority": "confirmed"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "total_chars": 19,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            19
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 19,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 0,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [
+        {
+          "error_type": "数值缺失",
+          "spans": [
+            {
+              "start": 0,
+              "end": 19,
+              "text": "化学制药周收益率排名第一，涨跌幅为%；"
+            }
+          ],
+          "reason": "百分号前缺少数值，增长/占比数字遗漏。",
+          "status": "confirmed_error",
+          "evidence": [
+            {
+              "kind": "source_text",
+              "start": 17,
+              "end": 18,
+              "text": "%"
+            },
+            {
+              "kind": "deterministic",
+              "check": "numeric_gap",
+              "text": "%"
+            }
+          ],
+          "detector_id": "verified.percent_gap",
+          "validation": "deterministic",
+          "verification_spans": [
+            {
+              "start": 17,
+              "end": 18,
+              "text": "%"
+            }
+          ]
+        }
+      ],
+      "structured_relation_rule": [],
+      "arithmetic_aids": []
+    }
+  },
+  {
+    "probe_id": "P02",
+    "purpose": "排名句式与词表边界",
+    "role": "synthetic_parser_probe_not_real_case",
+    "before": {
+      "text": "跑输沪深300指数0.32pct，涨跌幅居申万31个子行业第41名。",
+      "errors": [],
+      "coverage": {
+        "complete": false,
+        "total_chars": 34,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            34
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 34,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 0,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [],
+      "structured_relation_rule": [],
+      "arithmetic_aids": []
+    },
+    "after": {
+      "text": "31个一级行业中排名第41名。",
+      "errors": [
+        {
+          "error_type": "数值不一致错误",
+          "spans": [
+            {
+              "start": 0,
+              "end": 15,
+              "text": "31个一级行业中排名第41名。"
+            }
+          ],
+          "reason": "原文将排名限定在31个一级行业内，但名次为第41，超过同一集合明示的总数；不推定正确名次。",
+          "status": "confirmed_error",
+          "evidence": [
+            {
+              "kind": "source_text",
+              "start": 0,
+              "end": 14,
+              "text": "31个一级行业中排名第41名"
+            },
+            {
+              "kind": "deterministic",
+              "check": "rank_within_explicit_total",
+              "start": 0,
+              "end": 14,
+              "total_count": 31,
+              "rank": 41,
+              "scope": "一级行业",
+              "relation": "排名"
+            }
+          ],
+          "detector_id": "verified.rank_within_total",
+          "validation": "deterministic",
+          "verification_spans": [
+            {
+              "start": 0,
+              "end": 14,
+              "text": "31个一级行业中排名第41名"
+            }
+          ],
+          "source_issue_key": "591e620855821fc7188dee2a",
+          "source_structure": {
+            "family": "rank_within_explicit_total",
+            "anchors": [
+              {
+                "start": 0,
+                "end": 14,
+                "text": "31个一级行业中排名第41名"
+              }
+            ],
+            "canonical_type": "数值不一致错误",
+            "proof_status": "confirmed_error",
+            "checks": [
+              {
+                "kind": "deterministic",
+                "check": "rank_within_explicit_total",
+                "start": 0,
+                "end": 14,
+                "total_count": 31,
+                "rank": 41,
+                "scope": "一级行业",
+                "relation": "排名"
+              }
+            ]
+          },
+          "id": "f5c9990455aa9106dc739789",
+          "review_priority": "confirmed"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "total_chars": 15,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            15
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 15,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 0,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [],
+      "structured_relation_rule": [
+        {
+          "error_type": "数值不一致错误",
+          "spans": [
+            {
+              "start": 0,
+              "end": 15,
+              "text": "31个一级行业中排名第41名。"
+            }
+          ],
+          "reason": "原文将排名限定在31个一级行业内，但名次为第41，超过同一集合明示的总数；不推定正确名次。",
+          "status": "confirmed_error",
+          "evidence": [
+            {
+              "kind": "source_text",
+              "start": 0,
+              "end": 14,
+              "text": "31个一级行业中排名第41名"
+            },
+            {
+              "kind": "deterministic",
+              "check": "rank_within_explicit_total",
+              "start": 0,
+              "end": 14,
+              "total_count": 31,
+              "rank": 41,
+              "scope": "一级行业",
+              "relation": "排名"
+            }
+          ],
+          "detector_id": "verified.rank_within_total",
+          "validation": "deterministic",
+          "verification_spans": [
+            {
+              "start": 0,
+              "end": 14,
+              "text": "31个一级行业中排名第41名"
+            }
+          ]
+        }
+      ],
+      "arithmetic_aids": []
+    }
+  },
+  {
+    "probe_id": "P03",
+    "purpose": "派息率与已支持比率名称",
+    "role": "synthetic_parser_probe_not_real_case",
+    "before": {
+      "text": "中国移动：公司2024年全年派息率为73元。",
+      "errors": [],
+      "coverage": {
+        "complete": false,
+        "total_chars": 22,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            22
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 22,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 0,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [],
+      "structured_relation_rule": [],
+      "arithmetic_aids": []
+    },
+    "after": {
+      "text": "公司2024年全年毛利率为73元。",
+      "errors": [
+        {
+          "error_type": "数值单位错误",
+          "spans": [
+            {
+              "start": 0,
+              "end": 17,
+              "text": "公司2024年全年毛利率为73元。"
+            }
+          ],
+          "reason": "明确的比率指标使用金额单位，量纲不相容；不推测应改成的数值。",
+          "status": "confirmed_error",
+          "evidence": [
+            {
+              "kind": "source_text",
+              "start": 9,
+              "end": 16,
+              "text": "毛利率为73元"
+            },
+            {
+              "kind": "deterministic",
+              "check": "ratio_with_currency_unit"
+            }
+          ],
+          "detector_id": "verified.unit_dimension",
+          "validation": "deterministic",
+          "verification_spans": [
+            {
+              "start": 9,
+              "end": 16,
+              "text": "毛利率为73元"
+            }
+          ],
+          "id": "2607292fa87b5d59a52ae441",
+          "review_priority": "confirmed"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "total_chars": 17,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            17
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 17,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 1,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [],
+      "structured_relation_rule": [],
+      "arithmetic_aids": []
+    }
+  },
+  {
+    "probe_id": "P04",
+    "purpose": "隐式差值与显式算式",
+    "role": "synthetic_parser_probe_not_real_case",
+    "before": {
+      "text": "中国方面，本周铝锭社会库存持续减少，目前库存54.9万吨，较上周58.76万吨减少5.8万吨。",
+      "errors": [],
+      "coverage": {
+        "complete": false,
+        "total_chars": 47,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            47
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 47,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 0,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [],
+      "structured_relation_rule": [],
+      "arithmetic_aids": []
+    },
+    "after": {
+      "text": "58.76-54.9=5.8。",
+      "errors": [
+        {
+          "error_type": "计算错误",
+          "spans": [
+            {
+              "start": 0,
+              "end": 15,
+              "text": "58.76-54.9=5.8。"
+            }
+          ],
+          "reason": "显式等式复算结果为3.9，与原文不符。",
+          "status": "confirmed_error",
+          "evidence": [
+            {
+              "kind": "source_text",
+              "start": 0,
+              "end": 14,
+              "text": "58.76-54.9=5.8"
+            },
+            {
+              "kind": "deterministic",
+              "check": "explicit_equation",
+              "expression": "58.76-54.9=5.8",
+              "expected_display": "3.9",
+              "reported": "5.8",
+              "result_dimension": "number"
+            }
+          ],
+          "detector_id": "verified.arithmetic",
+          "validation": "deterministic",
+          "verification_spans": [
+            {
+              "start": 0,
+              "end": 14,
+              "text": "58.76-54.9=5.8"
+            }
+          ],
+          "id": "996a18ee0dea9fa447f306c1",
+          "review_priority": "confirmed"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "total_chars": 15,
+        "execution_complete": false,
+        "candidate_quality_complete": true,
+        "processed_chars": 0,
+        "processed_ranges": [],
+        "unprocessed_ranges": [
+          [
+            0,
+            15
+          ]
+        ],
+        "context_mode": "whole",
+        "model_ran": false,
+        "requested_model": true,
+        "model_complete": false,
+        "rules_complete": true,
+        "rules_processed_chars": 15,
+        "global_linking_complete": true,
+        "truncation_reasons": [
+          "model_unavailable_offline_rules_only"
+        ],
+        "global_link_strategy": "repeated_known_metric_with_original_sentences",
+        "indexed_metric_mentions": 0,
+        "planned_model_calls": 0,
+        "finished_model_calls": 0,
+        "supported_error_types": [
+          "时间信息非法",
+          "冗余语句",
+          "格式错误",
+          "数值缺失",
+          "属性值缺失错误",
+          "术语误用",
+          "法规引用错误",
+          "模糊语言",
+          "数值单位错误",
+          "金融要素缺失",
+          "语义逻辑矛盾",
+          "时间矛盾",
+          "数值不一致错误",
+          "计算错误",
+          "不一致条款"
+        ],
+        "coverage_note": "处理覆盖描述已运行路径，不代表十五类错误的召回率；规则仅覆盖有限类型。",
+        "external_source_documents_used": false,
+        "token_estimate_method": "cjk_char_plus_ascii_quarter_with_margin",
+        "span_normalization": "source_adjacent_v1",
+        "review_priority_basis": "confirmed=不需要复核; high=确定性规则触发或可数值核对的候选; low=其余待复核提示"
+      },
+      "numeric_gap_rule": [],
+      "structured_relation_rule": [],
+      "arithmetic_aids": []
+    }
+  }
+]

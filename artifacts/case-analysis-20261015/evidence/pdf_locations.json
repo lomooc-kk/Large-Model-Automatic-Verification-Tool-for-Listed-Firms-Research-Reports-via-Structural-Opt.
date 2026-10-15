@@ -1,0 +1,194 @@
+{
+  "I03": {
+    "gold_page_one_based": 4,
+    "source_first_matching_page_one_based": 3,
+    "gold_table_row_bbox": [
+      41.6378,
+      140.20000000000005,
+      553.6378,
+      160.20000000000005
+    ],
+    "source_image": "evidence/images/I03-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "命中"
+    ]
+  },
+  "M01": {
+    "gold_page_one_based": 4,
+    "source_first_matching_page_one_based": 3,
+    "gold_table_row_bbox": [
+      41.6378,
+      180.20000000000005,
+      553.6378,
+      200.20000000000005
+    ],
+    "source_image": "evidence/images/M01-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "命中"
+    ]
+  },
+  "C01": {
+    "gold_page_one_based": 7,
+    "source_first_matching_page_one_based": 7,
+    "gold_table_row_bbox": [
+      41.6378,
+      485.20000000000005,
+      553.6378,
+      505.20000000000005
+    ],
+    "source_image": "evidence/images/C01-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "命中"
+    ]
+  },
+  "I02": {
+    "gold_page_one_based": 12,
+    "source_first_matching_page_one_based": 12,
+    "gold_table_row_bbox": [
+      41.6378,
+      623.2,
+      553.6378,
+      643.2
+    ],
+    "source_image": "evidence/images/I02-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "命中"
+    ]
+  },
+  "U01": {
+    "gold_page_one_based": 14,
+    "source_first_matching_page_one_based": 13,
+    "gold_table_row_bbox": [
+      41.6378,
+      111.20000000000005,
+      553.6378,
+      131.20000000000005
+    ],
+    "source_image": "evidence/images/U01-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "命中"
+    ]
+  },
+  "M02": {
+    "gold_page_one_based": 14,
+    "source_first_matching_page_one_based": 13,
+    "gold_table_row_bbox": [
+      41.6378,
+      151.20000000000005,
+      553.6378,
+      171.20000000000005
+    ],
+    "source_image": "evidence/images/M02-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "漏检"
+    ]
+  },
+  "C02": {
+    "gold_page_one_based": 19,
+    "source_first_matching_page_one_based": 19,
+    "gold_table_row_bbox": [
+      41.6378,
+      771.7000400000001,
+      553.6378,
+      791.7000400000001
+    ],
+    "source_image": "evidence/images/C02-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "漏检",
+      "漏检"
+    ]
+  },
+  "I01": {
+    "gold_page_one_based": 24,
+    "source_first_matching_page_one_based": 24,
+    "gold_table_row_bbox": [
+      41.6378,
+      548.7,
+      553.6378,
+      568.7
+    ],
+    "source_image": "evidence/images/I01-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "漏检",
+      "漏检"
+    ]
+  },
+  "U02": {
+    "gold_page_one_based": 53,
+    "source_first_matching_page_one_based": 53,
+    "gold_table_row_bbox": [
+      41.6378,
+      734.2000400000001,
+      553.6378,
+      754.2000400000001
+    ],
+    "source_image": "evidence/images/U02-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "漏检",
+      "漏检"
+    ]
+  },
+  "C03": {
+    "gold_page_one_based": 60,
+    "source_first_matching_page_one_based": 59,
+    "gold_table_row_bbox": [
+      41.6378,
+      114.20000000000005,
+      553.6378,
+      134.20000000000005
+    ],
+    "source_image": "evidence/images/C03-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "命中"
+    ]
+  },
+  "M03": {
+    "gold_page_one_based": 64,
+    "source_first_matching_page_one_based": 63,
+    "gold_table_row_bbox": [
+      41.6378,
+      89.20000000000005,
+      553.6378,
+      109.20000000000005
+    ],
+    "source_image": "evidence/images/M03-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "漏检"
+    ]
+  },
+  "U03": {
+    "gold_page_one_based": 66,
+    "source_first_matching_page_one_based": 65,
+    "gold_table_row_bbox": [
+      41.6378,
+      186.20000000000005,
+      553.6378,
+      206.20000000000005
+    ],
+    "source_image": "evidence/images/U03-gold-row.png",
+    "extraction": "Unmodified pixels from source table header and selected gold row, vertically concatenated; intervening rows omitted.",
+    "captured_states": [
+      "命中",
+      "命中"
+    ]
+  }
+}

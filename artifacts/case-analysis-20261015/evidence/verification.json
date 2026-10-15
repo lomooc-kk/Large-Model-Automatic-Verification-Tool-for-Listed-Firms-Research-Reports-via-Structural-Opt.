@@ -1,0 +1,9 @@
+{
+  "selected_cases": 12,
+  "all_provenance_checks_passed": true,
+  "all_gold_offsets_exact": true,
+  "all_selected_gold_scorable": true,
+  "all_selected_gold_quotes_found_in_provided_pdf_source": true,
+  "full_model_rerun_performed": false,
+  "synthetic_probe_count": 4
+}

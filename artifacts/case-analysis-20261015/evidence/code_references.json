@@ -1,0 +1,212 @@
+{
+  "U01": [
+    {
+      "file": "text_review.py",
+      "line": 59,
+      "anchor": "_RATIO_CURRENCY_RE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "table_unit_context.py",
+      "line": 98,
+      "anchor": "def eps_unit_comparisons",
+      "path": "factcheck/src/yjcheck/table_unit_context.py"
+    }
+  ],
+  "U02": [
+    {
+      "file": "table_unit_context.py",
+      "line": 98,
+      "anchor": "def eps_unit_comparisons",
+      "path": "factcheck/src/yjcheck/table_unit_context.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 59,
+      "anchor": "_RATIO_CURRENCY_RE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    }
+  ],
+  "U03": [
+    {
+      "file": "text_review.py",
+      "line": 59,
+      "anchor": "_RATIO_CURRENCY_RE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    }
+  ],
+  "M01": [
+    {
+      "file": "text_review.py",
+      "line": 83,
+      "anchor": "_PERCENT_GAP_RE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 486,
+      "anchor": "def _numeric_gap_rules",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    }
+  ],
+  "M02": [
+    {
+      "file": "text_review.py",
+      "line": 80,
+      "anchor": "_SUSPENDED_PUNCT_RE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 436,
+      "anchor": "def _suspended_punctuation_rules",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 486,
+      "anchor": "def _numeric_gap_rules",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "text_fusion.py",
+      "line": 17,
+      "anchor": "_MISSING_TYPES =",
+      "path": "factcheck/src/yjcheck/text_fusion.py"
+    }
+  ],
+  "M03": [
+    {
+      "file": "text_review.py",
+      "line": 486,
+      "anchor": "def _numeric_gap_rules",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 92,
+      "anchor": "_FOCUS_GUIDANCE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "text_fusion.py",
+      "line": 581,
+      "anchor": "def merge_represented_candidates",
+      "path": "factcheck/src/yjcheck/text_fusion.py"
+    }
+  ],
+  "I01": [
+    {
+      "file": "text_structure.py",
+      "line": 36,
+      "anchor": "_RANK_WITH_TOTAL =",
+      "path": "factcheck/src/yjcheck/text_structure.py"
+    },
+    {
+      "file": "text_structure.py",
+      "line": 111,
+      "anchor": "def rank_exceeds_explicit_total",
+      "path": "factcheck/src/yjcheck/text_structure.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 460,
+      "anchor": "def _structured_relation_rules",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    }
+  ],
+  "I02": [
+    {
+      "file": "text_structure.py",
+      "line": 19,
+      "anchor": "_PAIRED_SERIES =",
+      "path": "factcheck/src/yjcheck/text_structure.py"
+    },
+    {
+      "file": "text_structure.py",
+      "line": 87,
+      "anchor": "def paired_series",
+      "path": "factcheck/src/yjcheck/text_structure.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 460,
+      "anchor": "def _structured_relation_rules",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    }
+  ],
+  "I03": [
+    {
+      "file": "text_structure.py",
+      "line": 36,
+      "anchor": "_RANK_WITH_TOTAL =",
+      "path": "factcheck/src/yjcheck/text_structure.py"
+    },
+    {
+      "file": "text_structure.py",
+      "line": 111,
+      "anchor": "def rank_exceeds_explicit_total",
+      "path": "factcheck/src/yjcheck/text_structure.py"
+    }
+  ],
+  "C01": [
+    {
+      "file": "text_review.py",
+      "line": 55,
+      "anchor": "_EQUATION_RE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    },
+    {
+      "file": "arithmetic_context.py",
+      "line": 27,
+      "anchor": "_INVENTORY_CHANGE =",
+      "path": "factcheck/src/yjcheck/arithmetic_context.py"
+    },
+    {
+      "file": "arithmetic_context.py",
+      "line": 372,
+      "anchor": "def source_arithmetic_checks",
+      "path": "factcheck/src/yjcheck/arithmetic_context.py"
+    }
+  ],
+  "C02": [
+    {
+      "file": "arithmetic_context.py",
+      "line": 48,
+      "anchor": "_SHARE_MONEY =",
+      "path": "factcheck/src/yjcheck/arithmetic_context.py"
+    },
+    {
+      "file": "arithmetic_context.py",
+      "line": 270,
+      "anchor": "def rounded_share_checks",
+      "path": "factcheck/src/yjcheck/arithmetic_context.py"
+    },
+    {
+      "file": "text_review.py",
+      "line": 92,
+      "anchor": "_FOCUS_GUIDANCE =",
+      "path": "factcheck/src/yjcheck/text_review.py"
+    }
+  ],
+  "C03": [
+    {
+      "file": "arithmetic_context.py",
+      "line": 16,
+      "anchor": "_CHANGE =",
+      "path": "factcheck/src/yjcheck/arithmetic_context.py"
+    },
+    {
+      "file": "arithmetic_context.py",
+      "line": 101,
+      "anchor": "def price_change_checks",
+      "path": "factcheck/src/yjcheck/arithmetic_context.py"
+    },
+    {
+      "file": "arithmetic_context.py",
+      "line": 372,
+      "anchor": "def source_arithmetic_checks",
+      "path": "factcheck/src/yjcheck/arithmetic_context.py"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "created_at_shanghai": "2026-10-15T17:38:31.690219+08:00",
+  "date": "2026-10-15",
+  "repository_url": "https://github.com/lomooc-kk/Large-Model-Automatic-Verification-Tool-for-Listed-Firms-Research-Reports-via-Structural-Opt..git",
+  "branch": "main",
+  "head": "a3a37752c8e7c34ec2f38cab04d6afbb25a27a2e",
+  "origin_main": "a3a37752c8e7c34ec2f38cab04d6afbb25a27a2e",
+  "head_commit": "a3a37752c8e7c34ec2f38cab04d6afbb25a27a2e\n2026-10-12T00:55:55+08:00\nfeat: add classified external financial corpus integration",
+  "update_result": "git fetch origin; git switch main; git pull --ff-only origin main; success",
+  "historical_pdf_predictions": "Transcribed from provided PDF only; original transport logs for this PDF batch were not supplied or reconstructed.",
+  "offline_current_scope": "Current checkout, hybrid with chat=None, examples=(), model_ran=false. This is NOT a full model/hybrid rerun.",
+  "raw_sample_role": "Existing evaluation records; not verified original broker publications. Perturbations already in the evaluation source are preserved.",
+  "files": [
+    {
+      "path": "任务case.txt",
+      "bytes": 407,
+      "sha256": "d43e520e75b36ca36ff0935f1049eeb8665d45ae6021bc47c3b1eb4f8de6cea8",
+      "path_kind": "local_original_not_published"
+    },
+    {
+      "path": "群文件_第201-250篇研报逐篇测评明细(2).pdf",
+      "bytes": 1381146,
+      "sha256": "d2b73aab9c86db567fc83a4456f07f5723ec4cc81d4f8d1717071771b1ba1713",
+      "path_kind": "local_original_not_published"
+    },
+    {
+      "path": "FinED-Bench-main/fined_bench/eval_data.json",
+      "bytes": 11736494,
+      "sha256": "5ffe80ef7c529d194c93c61d9036c1d19cc16551ff711d75239402518b141414",
+      "path_kind": "upstream_dataset_identifier"
+    },
+    {
+      "path": "artifacts/research442-rerun-20261005/inputs/inputs.research442.jsonl",
+      "bytes": 1979863,
+      "sha256": "6f4c3e2b106b5e409c8fc542157639ac8fe3ade73dbed30a99adac3871b55cd9",
+      "path_kind": "repository_relative"
+    },
+    {
+      "path": "artifacts/research442-rerun-20261005/inputs/gold.research442.jsonl",
+      "bytes": 904762,
+      "sha256": "83a31592b745c788bc59fed0df80ee10b3d034eb1b8625ff62eb5f3e8c88a469",
+      "path_kind": "repository_relative"
+    }
+  ],
+  "selected_count": 12,
+  "distinct_documents": 10,
+  "selected_by_type": {
+    "数值单位错误": 3,
+    "数值缺失": 3,
+    "数值不一致错误": 3,
+    "计算错误": 3
+  },
+  "group_pdf_documents": 50,
+  "group_pdf_gold_rows_all_types": 202,
+  "group_pdf_gold_counts": {
+    "属性值缺失错误": 13,
+    "数值单位错误": 34,
+    "语义逻辑矛盾": 17,
+    "时间信息非法": 21,
+    "数值不一致错误": 14,
+    "数值缺失": 18,
+    "术语误用": 18,
+    "冗余语句": 21,
+    "金融要素缺失": 14,
+    "计算错误": 10,
+    "时间矛盾": 15,
+    "格式错误": 7
+  },
+  "selected_historical_direct_hit_count": 9,
+  "selected_historical_hybrid_hit_count": 7,
+  "offline_target_type_and_containment_match_count": 0,
+  "numeric_checks": {
+    "U02_yuan_per_ton": "350000",
+    "U02_wan_yuan_per_ton": "35",
+    "C01_difference_wan_ton": "3.86",
+    "C01_reported_delta_gap": "1.94",
+    "C01_compatible_difference_interval": [
+      "3.805",
+      "3.915"
+    ],
+    "C02_share_percent": "79.4352584072210240434539499960",
+    "C02_same_doc_control_share_percent": "38.00",
+    "C02_share_interval": [
+      "79.4316752201609521337140803163",
+      "79.4388417373939091362955566650"
+    ],
+    "C03_previous_value": "1070.39",
+    "C03_change_percent": "1.67602462653799082577378338736",
+    "C03_conservative_change_interval_percent": [
+      "1.67554185351270553064275037369",
+      "1.67650740858386741157345989275"
+    ]
+  },
+  "remote_main_rechecked_sha": "a3a37752c8e7c34ec2f38cab04d6afbb25a27a2e",
+  "public_export": {
+    "source": "Completed local case-analysis-20261015 delivery",
+    "path_policy": "Package-relative, repository-relative, or explicit upstream dataset identifiers; local account and WeChat paths omitted.",
+    "original_pdf_bytes_unchanged": true,
+    "analysis_code_commit_is_not_upload_commit": true,
+    "original_group_pdf_and_task_excluded": true,
+    "originals_policy": "Original group PDF and task TXT retained only in local delivery. Public copy includes the report and selected analysis evidence."
+  }
+}
